@@ -4,3 +4,5 @@ Android library of button loading for sign in
 ## Requirements
 
 ## Implementation
+
+## License
