@@ -2,15 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/contentMain"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/high_size_button">
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/high_size_button"
+    android:paddingEnd="@dimen/padding_middle_default"
+    android:paddingStart="@dimen/padding_middle_default"
+
+    style="@style/Widget.ButtonLoading"
+    >
     <TextView
         android:id="@+id/tvButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:text="Button"
+        android:textSize="@dimen/text_size_button_default"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         tools:text="Iniciar sesión"
-        android:textAppearance="?android:attr/textAppearanceButton"
+
         />
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/pbLoading"

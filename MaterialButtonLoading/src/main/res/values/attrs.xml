@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="loadingButtonStyleable">
         <attr name="text" format="string"/>
+        <attr name="textColor" format="string"/>
         <attr name="loading" format="boolean"/>
         <attr name="enabled" format="boolean"/>
         <attr name="progressIndicator" format="reference"/>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Loading button styles-->
+    <style name="ThemeOverlay.Widget.ProgressButton.Black" parent="">
+        <item name="android:textAppearanceButton">@style/TextAppearance.ProgressButton.Black</item>
+        <item name="android:colorControlHighlight">?attr/colorAccent</item>
+    </style>
+
+    <style name="TextAppearance.Body.White" parent="@style/TextAppearance.MaterialComponents.Body1">
+        <!-- <item name="android:fontFamily"></item>-->
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!--Text styiling for black button, with selector-->
+    <style name="TextAppearance.ProgressButton.Black" parent="@style/TextAppearance.Body.White">
+        <item name="android:textColor">@color/loading_button_text_color_selector</item>
+    </style>
+
+    <style name="Widget.ButtonLoading" parent="">
+        <item name="android:theme">@style/ThemeOverlay.Widget.ProgressButton.Black</item>
+        <item name="android:background">@drawable/loading_button_background</item>
+    </style>
+</resources>
