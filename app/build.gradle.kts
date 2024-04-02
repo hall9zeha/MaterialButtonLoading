@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.barryzeha.materialbuttonloading"
+    namespace = "com.barryzeha.materialbutton"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.barryzeha.materialbuttonloading"
+        applicationId = "com.barryzeha.materialbutton"
         minSdk = 23
         targetSdk = 34
         versionCode = 1

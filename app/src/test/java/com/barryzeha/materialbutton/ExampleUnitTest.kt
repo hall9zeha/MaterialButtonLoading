@@ -1,4 +1,4 @@
-package com.barryzeha.materialbuttonloading
+package com.barryzeha.materialbutton
 
 import org.junit.Test
 

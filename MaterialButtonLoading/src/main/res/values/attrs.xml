@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="loadingButtonStyleable">
+        <attr name="android:layout_width" format="dimension"/>
+        <attr name="android:layout_height" format="dimension"/>
         <attr name="text" format="string"/>
         <attr name="textColor" format="string"/>
         <attr name="loading" format="boolean"/>
