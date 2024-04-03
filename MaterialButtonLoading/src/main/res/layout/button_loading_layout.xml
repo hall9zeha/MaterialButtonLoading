@@ -7,7 +7,8 @@
     android:layout_height="wrap_content"
     android:paddingEnd="@dimen/padding_middle_default"
     android:paddingStart="@dimen/padding_middle_default"
-    style="@style/Widget.ButtonLoading">
+    tools:background="#c5c5"
+    >
     <TextView
         android:id="@+id/tvButton"
         android:layout_width="wrap_content"

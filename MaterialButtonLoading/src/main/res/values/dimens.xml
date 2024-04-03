@@ -3,6 +3,7 @@
     <dimen name="high_size_button">40dp</dimen>
     <dimen name="padding_middle_default">22dp</dimen>
     <dimen name="text_size_button_default">14sp</dimen>
-    <dimen name="button_height_default">48dp</dimen>
+    <dimen name="button_height_default">40dp</dimen>
     <dimen name="button_width_default">120dp</dimen>
+    <dimen name="corner_radius_default">24dp</dimen>
 </resources>
