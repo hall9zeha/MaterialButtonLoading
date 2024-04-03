@@ -3,7 +3,11 @@ package com.barryzeha.materialbuttonloading.components
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.barryzeha.materialbuttonloading.R
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import kotlin.math.min
@@ -28,13 +33,22 @@ class ButtonLoading @JvmOverloads constructor(
     defStyleAttr:Int=0,
     ):RelativeLayout(context,attrs,defStyleAttr) {
 
+    private val cornerRadius = 20f
+    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val path = Path()
+    private val rect = RectF()
     private val contentMain:RelativeLayout
     private var progressBar: CircularProgressIndicator
     private val buttonTextView: TextView
     private var textColor = androidx.appcompat.R.attr.titleTextColor
 
+
     init {
-        Log.d("ButtonLoading", "Inflating layout...")
+        paint.style = Paint.Style.FILL
+        val array: TypedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.colorPrimary))
+        val defaultTextColor = array.getColor(0, 0)
+        paint.color = resources.getColor(android.R.color.holo_blue_light)
+
         val root = LayoutInflater.from(context).inflate(R.layout.button_loading_layout, this, true)
         contentMain = root.findViewById(R.id.contentMain)
         buttonTextView = root.findViewById(R.id.tvButton)
@@ -97,6 +111,16 @@ class ButtonLoading @JvmOverloads constructor(
         buttonTextView.isEnabled = enabled
     }
 
+    override fun onDraw(canvas: Canvas) {
+        val width = width.toFloat()
+        val height = height.toFloat()
+
+        // Dibuja el fondo redondeado
+        rect.set(0f, 0f, width, height)
+        path.reset()
+        path.addRoundRect(rect, cornerRadius, cornerRadius, Path.Direction.CW)
+        canvas.drawPath(path, paint)
+    }
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         Log.d("onMeasure: ",widthMeasureSpec.toString())
