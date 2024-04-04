@@ -36,6 +36,7 @@ class ButtonLoading @JvmOverloads constructor(
     private val path = Path()
     private val rect = RectF()
     private var colorStroke:Int? = null
+    private var backgroundColor:Int?=null
 
     private val textView: TextView
 
@@ -81,9 +82,12 @@ class ButtonLoading @JvmOverloads constructor(
         val enabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
         val colorText = arr.getString(R.styleable.loadingButtonStyleable_textColor)
         val strokeColor = arr.getString(R.styleable.loadingButtonStyleable_colorStroke)
+        val colorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
+
 
         val textColor = if(!colorText.isNullOrEmpty()) Color.parseColor(colorText) else defaultTextColor
         colorStroke = if(!strokeColor.isNullOrEmpty()) Color.parseColor(strokeColor) else defaultColor
+        backgroundColor = if(!colorBackground.isNullOrEmpty()) Color.parseColor(colorBackground) else defaultColor
 
         arr.recycle()
         isEnabled = enabled
@@ -135,9 +139,13 @@ class ButtonLoading @JvmOverloads constructor(
         val array: TypedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.colorPrimary))
         val defaultColor = array.getColor(0, 0)
 
+        // Establecer los colores por defecto
+        val cStroke=colorStroke?.let{defaultColor}?.run{colorStroke}
+        val cBackground=backgroundColor?.let{defaultColor}?.run{backgroundColor}
+
         // Dibujar el fondo redondeado
         paint.style = Paint.Style.FILL
-        paint.color = defaultColor
+        paint.color = cBackground!!
         rect.set(0f, 0f, width, height)
         path.reset()
         path.addRoundRect(rect, corners!!, corners, Path.Direction.CW)
@@ -145,7 +153,7 @@ class ButtonLoading @JvmOverloads constructor(
 
         // Dibujar el borde redondeado
         paint.style = Paint.Style.STROKE
-        val cStroke=colorStroke?.let{defaultColor}?.run{colorStroke}
+
         paint.color = cStroke!!
         paint.strokeWidth = 3f // Establecer el ancho del trazo si es necesario
         canvas.drawRoundRect(rect, corners, corners, paint)
