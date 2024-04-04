@@ -3,6 +3,7 @@
     <declare-styleable name="loadingButtonStyleable">
         <attr name="text" format="string"/>
         <attr name="textColor" format="string"/>
+        <attr name="textSize" format="string"/>
         <attr name="cornerRadius" format="dimension|reference"/>
         <attr name="colorStroke" format="string|reference"/>
         <attr name="colorBackground" format="string|reference"/>

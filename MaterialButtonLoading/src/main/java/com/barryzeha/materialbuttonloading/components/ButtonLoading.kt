@@ -12,9 +12,12 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
-import android.view.Gravity.CENTER
+import android.view.Gravity
+
+import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.view.marginBottom
 import com.barryzeha.materialbuttonloading.R
 import kotlin.math.min
 
@@ -31,6 +34,7 @@ class ButtonLoading @JvmOverloads constructor(
     defStyleAttr:Int=0,
     ):RelativeLayout(context,attrs,defStyleAttr) {
 
+    private val padding=8
     private var cornerRadius:Float? = null
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val path = Path()
@@ -38,31 +42,30 @@ class ButtonLoading @JvmOverloads constructor(
     private var colorStroke:Int? = null
     private var backgroundColor:Int?=null
 
-    private val textView: TextView
+    private var textView: TextView
 
     init {
         setBackgroundColor(Color.TRANSPARENT)
+        textView = TextView(context)
+        setUpChildViews()
+        loadAttr(attrs, defStyleAttr)
+    }
+    private fun setUpChildViews(){
         val params = LayoutParams(
-            LayoutParams.WRAP_CONTENT,
-            LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        textView = TextView(context)
         textView.setPadding(22,22,22,22)
         // Configurar el texto y otros atributos del TextView según sea necesario
-        textView.text = "Texto de ejemplo"
-        textView.setTextColor(Color.WHITE)
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
         textView.setTypeface(textView.typeface, Typeface.BOLD)
-        textView.gravity= CENTER
+        textView.gravity= Gravity.CENTER
         params.addRule(CENTER_IN_PARENT)
         textView.layoutParams=params
 
-        // Añadir el TextView como vista hijo
         addView(textView)
-        loadAttr(attrs, defStyleAttr)
     }
-
     @SuppressLint("CustomViewStyleable")
     private fun loadAttr(attrs: AttributeSet?, defStyleAttr: Int) {
         val arr = context.obtainStyledAttributes(
@@ -110,14 +113,14 @@ class ButtonLoading @JvmOverloads constructor(
         }
     }
     fun setTextColor(color:Int){
-
+        textView.setTextColor(color)
     }
 
     fun setLoadingColor(color:Int){
 
-
     }
     fun setText(text : String?) {
+       textView.text=if(text.isNullOrEmpty())"Button" else text
 
     }
 
@@ -129,6 +132,12 @@ class ButtonLoading @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val width = width.toFloat()
         val height = height.toFloat()
+
+        val rectLeft = padding.toFloat()
+        val rectTop = padding.toFloat()
+        val rectRight = width - padding.toFloat()
+        val rectBottom = height - padding.toFloat()
+
         val corners=
         cornerRadius?.let{
             24F
@@ -146,7 +155,9 @@ class ButtonLoading @JvmOverloads constructor(
         // Dibujar el fondo redondeado
         paint.style = Paint.Style.FILL
         paint.color = cBackground!!
-        rect.set(0f, 0f, width, height)
+        // Aplicamos paddin al objeto que se dibuja dentro de nuestro contentMain
+        rect.set(rectLeft, rectTop, rectRight, rectBottom)
+
         path.reset()
         path.addRoundRect(rect, corners!!, corners, Path.Direction.CW)
         canvas.drawPath(path, paint)
@@ -156,6 +167,7 @@ class ButtonLoading @JvmOverloads constructor(
 
         paint.color = cStroke!!
         paint.strokeWidth = 3f // Establecer el ancho del trazo si es necesario
+
         canvas.drawRoundRect(rect, corners, corners, paint)
 
 
@@ -186,8 +198,19 @@ class ButtonLoading @JvmOverloads constructor(
             else->defaultButtonHeight
         }
 
+        // Para redimencionar el textview cuando cambie el ancho del contenMain que es el relative layout
+        textView.measure(width, height)
+        val minWidth = resources.getDimensionPixelSize(R.dimen.button_width_default) // Define esta dimensión en tus recursos
+        textView.layoutParams.width =if (width < minWidth) minWidth else width
+        // Si no colocamos  measureChild el texto dentro de textview no se centra
+        measureChild(textView,width,height)
         setMeasuredDimension(width, height)
     }
-
+    companion object {
+        fun convertDpToPixels(dp: Float, context: Context): Int {
+            val scale = context.resources.displayMetrics.density
+            return (dp * scale + 0.5f).toInt()
+        }
+    }
 }
 
