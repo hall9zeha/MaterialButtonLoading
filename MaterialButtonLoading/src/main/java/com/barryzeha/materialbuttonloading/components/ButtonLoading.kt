@@ -2,6 +2,7 @@ package com.barryzeha.materialbuttonloading.components
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Color
@@ -9,15 +10,15 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
-
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.view.marginBottom
 import com.barryzeha.materialbuttonloading.R
 import kotlin.math.min
 
@@ -46,9 +47,25 @@ class ButtonLoading @JvmOverloads constructor(
 
     init {
         setBackgroundColor(Color.TRANSPARENT)
+        //setRippleEffect()
         textView = TextView(context)
         setUpChildViews()
         loadAttr(attrs, defStyleAttr)
+
+    }
+    private fun setRippleEffect() {
+        // Define el color del efecto Ripple
+        val rippleColor = Color.parseColor("#80FFFFFF") // Por ejemplo, un color semi-transparente blanco
+
+        // Crea el fondo del botón con efecto Ripple
+        val rippleDrawable = RippleDrawable(
+            ColorStateList.valueOf(rippleColor),
+            background,
+            null
+        )
+
+        // Aplica el fondo con efecto Ripple al botón
+        background = rippleDrawable
     }
     private fun setUpChildViews(){
         val params = LayoutParams(
@@ -56,9 +73,8 @@ class ButtonLoading @JvmOverloads constructor(
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        textView.setPadding(22,22,22,22)
+        textView.setPadding(22,32,22,22)
         // Configurar el texto y otros atributos del TextView según sea necesario
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
         textView.setTypeface(textView.typeface, Typeface.BOLD)
         textView.gravity= Gravity.CENTER
         params.addRule(CENTER_IN_PARENT)
@@ -75,7 +91,7 @@ class ButtonLoading @JvmOverloads constructor(
             0
         )
 
-        val array: TypedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.textColorPrimaryInverse,android.R.attr.colorPrimary))
+        val array: TypedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.textColorPrimaryInverseNoDisable,android.R.attr.colorPrimary))
         val defaultTextColor = array.getColor(0, 0)
         val defaultColor = array.getColor(1, 0)
 
@@ -84,9 +100,10 @@ class ButtonLoading @JvmOverloads constructor(
         val loading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
         val enabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
         val colorText = arr.getString(R.styleable.loadingButtonStyleable_textColor)
+        val textSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,15)
+        val allCaps = arr.getBoolean(R.styleable.loadingButtonStyleable_allCaps,false)
         val strokeColor = arr.getString(R.styleable.loadingButtonStyleable_colorStroke)
         val colorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
-
 
         val textColor = if(!colorText.isNullOrEmpty()) Color.parseColor(colorText) else defaultTextColor
         colorStroke = if(!strokeColor.isNullOrEmpty()) Color.parseColor(strokeColor) else defaultColor
@@ -95,10 +112,12 @@ class ButtonLoading @JvmOverloads constructor(
         arr.recycle()
         isEnabled = enabled
         setText(buttonText)
-        //progressBar.setAnimation(lottieResId)
+
         setLoading(loading)
         setLoadingColor(defaultTextColor)
         setTextColor(textColor)
+        setTextSize(textSize)
+        setAllCaps(allCaps)
     }
 
     fun setLoading(loading: Boolean){
@@ -123,7 +142,13 @@ class ButtonLoading @JvmOverloads constructor(
        textView.text=if(text.isNullOrEmpty())"Button" else text
 
     }
-
+    fun setTextSize(size:Int){
+       textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,size.toFloat())
+    }
+    fun setAllCaps(isAllCaps:Boolean){
+        if(isAllCaps)textView.isAllCaps=true
+        else textView.isAllCaps=false
+    }
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
 
@@ -202,6 +227,8 @@ class ButtonLoading @JvmOverloads constructor(
         textView.measure(width, height)
         val minWidth = resources.getDimensionPixelSize(R.dimen.button_width_default) // Define esta dimensión en tus recursos
         textView.layoutParams.width =if (width < minWidth) minWidth else width
+        //textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+
         // Si no colocamos  measureChild el texto dentro de textview no se centra
         measureChild(textView,width,height)
         setMeasuredDimension(width, height)
@@ -211,6 +238,7 @@ class ButtonLoading @JvmOverloads constructor(
             val scale = context.resources.displayMetrics.density
             return (dp * scale + 0.5f).toInt()
         }
+
     }
 }
 
