@@ -10,17 +10,22 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.barryzeha.materialbuttonloading.R
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 
 /**
@@ -33,7 +38,7 @@ class ButtonLoading @JvmOverloads constructor(
     context:Context,
     attrs: AttributeSet? = null,
     defStyleAttr:Int=0,
-    ):RelativeLayout(context,attrs,defStyleAttr) {
+    ):RelativeLayout(context,attrs,defStyleAttr), View.OnTouchListener {
 
     private val padding=8
     private var cornerRadius:Float? = null
@@ -45,28 +50,36 @@ class ButtonLoading @JvmOverloads constructor(
 
     private var textView: TextView
 
+    private var rippleX: Float? = null
+    private var rippleY: Float? = null
+    private var rippleRadius: Float? = null
+    private var strokeWidth:Float?=null
+    var maxRippleRadius: Float = 200f // Retrieve from resources
+    var rippleColor: Int = 0x88888888.toInt()
+
     init {
         setBackgroundColor(Color.TRANSPARENT)
-        //setRippleEffect()
         textView = TextView(context)
         setUpChildViews()
         loadAttr(attrs, defStyleAttr)
+        setOnTouchListener(this)
 
     }
-    private fun setRippleEffect() {
-        // Define el color del efecto Ripple
-        val rippleColor = Color.parseColor("#80FFFFFF") // Por ejemplo, un color semi-transparente blanco
 
-        // Crea el fondo del botón con efecto Ripple
-        val rippleDrawable = RippleDrawable(
-            ColorStateList.valueOf(rippleColor),
-            background,
-            null
-        )
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        when (event?.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                 startRipple(event.x, event.y)
+            }
 
-        // Aplica el fondo con efecto Ripple al botón
-        background = rippleDrawable
+            MotionEvent.ACTION_UP -> {
+                stopRipple()
+            }
+        }
+
+        return false
     }
+
     private fun setUpChildViews(){
         val params = LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -99,15 +112,19 @@ class ButtonLoading @JvmOverloads constructor(
         cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 50F)
         val loading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
         val enabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
+        val widthStroke = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,1f)
         val colorText = arr.getString(R.styleable.loadingButtonStyleable_textColor)
         val textSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,15)
         val allCaps = arr.getBoolean(R.styleable.loadingButtonStyleable_allCaps,false)
         val strokeColor = arr.getString(R.styleable.loadingButtonStyleable_colorStroke)
         val colorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
+        val colorRipple = arr.getString(R.styleable.loadingButtonStyleable_colorRipple)
 
         val textColor = if(!colorText.isNullOrEmpty()) Color.parseColor(colorText) else defaultTextColor
         colorStroke = if(!strokeColor.isNullOrEmpty()) Color.parseColor(strokeColor) else defaultColor
         backgroundColor = if(!colorBackground.isNullOrEmpty()) Color.parseColor(colorBackground) else defaultColor
+        rippleColor = if(!colorRipple.isNullOrEmpty()) Color.parseColor(colorRipple) else rippleColor
+        strokeWidth = widthStroke
 
         arr.recycle()
         isEnabled = enabled
@@ -119,7 +136,7 @@ class ButtonLoading @JvmOverloads constructor(
         setTextSize(textSize)
         setAllCaps(allCaps)
     }
-
+    // # region functions public
     fun setLoading(loading: Boolean){
         isClickable = !loading //Disable clickable when loading
         if(loading){
@@ -153,7 +170,61 @@ class ButtonLoading @JvmOverloads constructor(
         super.setEnabled(enabled)
 
     }
+    // # end region
 
+    /*Ripple try*/
+
+    private val ripplePaint = Paint().apply {
+        color = backgroundColor!!
+
+    }
+
+    private val animationExpand = object : Runnable {
+        override fun run() {
+            rippleRadius?.let { radius ->
+                if (radius < maxRippleRadius) {
+                    rippleRadius = radius + maxRippleRadius * 0.1f
+                    invalidate()
+                    postDelayed(this, 20L)
+                }
+            }
+        }
+    }
+
+    private val animationFade = object : Runnable {
+        override fun run() {
+            ripplePaint.color.let { color ->
+                if (color.alpha > 10) {
+                    ripplePaint.color = color.adjustAlpha(0.6f)
+                    invalidate()
+                    postDelayed(this, 20L)
+                } else {
+                    rippleX = null
+                    rippleY = null
+                    rippleRadius = null
+                    invalidate()
+                }
+            }
+
+        }
+    }
+
+    fun startRipple(x: Float, y: Float) {
+        rippleX = x
+        rippleY = y
+        rippleRadius = maxRippleRadius * 0.15f
+        ripplePaint.color = rippleColor
+        animationExpand.run()
+    }
+
+    fun stopRipple() {
+        if (rippleRadius != null) {
+            animationFade.run()
+        }
+    }
+
+
+    /*Ripple try*/
     override fun onDraw(canvas: Canvas) {
         val width = width.toFloat()
         val height = height.toFloat()
@@ -170,16 +241,10 @@ class ButtonLoading @JvmOverloads constructor(
             cornerRadius
         }
 
-        val array: TypedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.colorPrimary))
-        val defaultColor = array.getColor(0, 0)
-
-        // Establecer los colores por defecto
-        val cStroke=colorStroke?.let{defaultColor}?.run{colorStroke}
-        val cBackground=backgroundColor?.let{defaultColor}?.run{backgroundColor}
 
         // Dibujar el fondo redondeado
         paint.style = Paint.Style.FILL
-        paint.color = cBackground!!
+        paint.color = backgroundColor!!
         // Aplicamos paddin al objeto que se dibuja dentro de nuestro contentMain
         rect.set(rectLeft, rectTop, rectRight, rectBottom)
 
@@ -190,10 +255,10 @@ class ButtonLoading @JvmOverloads constructor(
         // Dibujar el borde redondeado
         paint.style = Paint.Style.STROKE
 
-        paint.color = cStroke!!
-        paint.strokeWidth = 3f // Establecer el ancho del trazo si es necesario
-
+        paint.color = colorStroke!!
+        paint.strokeWidth = convertDpToPixels(strokeWidth?:1f,context).toFloat()
         canvas.drawRoundRect(rect, corners, corners, paint)
+        canvas.drawRoundRect(rect, corners, corners, ripplePaint)
 
 
     }
@@ -241,4 +306,8 @@ class ButtonLoading @JvmOverloads constructor(
 
     }
 }
+fun Int.adjustAlpha(factor: Float): Int =
+    (this.ushr(24) * factor).roundToInt() shl 24 or (0x00FFFFFF and this)
 
+inline val Int.alpha: Int
+    get() = (this shr 24) and 0xFF
