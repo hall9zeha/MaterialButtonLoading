@@ -24,6 +24,8 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.barryzeha.materialbuttonloading.R
+import com.barryzeha.materialbuttonloading.common.adjustAlpha
+import com.barryzeha.materialbuttonloading.common.alpha
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -114,7 +116,7 @@ class ButtonLoading @JvmOverloads constructor(
         val enabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
         val widthStroke = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,1f)
         val colorText = arr.getString(R.styleable.loadingButtonStyleable_textColor)
-        val textSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,15)
+        val textSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,0)
         val allCaps = arr.getBoolean(R.styleable.loadingButtonStyleable_allCaps,false)
         val strokeColor = arr.getString(R.styleable.loadingButtonStyleable_colorStroke)
         val colorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
@@ -160,7 +162,9 @@ class ButtonLoading @JvmOverloads constructor(
 
     }
     fun setTextSize(size:Int){
-       textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,size.toFloat())
+        if(size<=0){
+            textView.setTextSize(15f)
+        }else{ textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,size.toFloat())}
     }
     fun setAllCaps(isAllCaps:Boolean){
         if(isAllCaps)textView.isAllCaps=true
@@ -306,8 +310,4 @@ class ButtonLoading @JvmOverloads constructor(
 
     }
 }
-fun Int.adjustAlpha(factor: Float): Int =
-    (this.ushr(24) * factor).roundToInt() shl 24 or (0x00FFFFFF and this)
 
-inline val Int.alpha: Int
-    get() = (this shr 24) and 0xFF

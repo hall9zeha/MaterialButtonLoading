@@ -9,13 +9,10 @@
     >
     <com.barryzeha.materialbuttonloading.components.ButtonLoading
         android:id="@+id/btnLoading"
-        android:layout_width="220dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:text="Button de prueba"
         app:textSize="15sp"
-
-        app:colorBackground="#d44545"
-        app:strokeWidth="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
