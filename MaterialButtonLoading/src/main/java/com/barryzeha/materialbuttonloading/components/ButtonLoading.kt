@@ -90,8 +90,9 @@ class ButtonLoading @JvmOverloads constructor(
 
         textView.setPadding(22,32,22,22)
         // Configurar el texto y otros atributos del TextView según sea necesario
-        textView.setTypeface(textView.typeface, Typeface.BOLD)
-        textView.gravity= Gravity.CENTER
+        textView.typeface =  Typeface.create("sans-serif-medium", Typeface.NORMAL)
+
+        textView.gravity= Gravity.CENTER_HORIZONTAL
         params.addRule(CENTER_IN_PARENT)
         textView.layoutParams=params
 
@@ -282,25 +283,42 @@ class ButtonLoading @JvmOverloads constructor(
         val width= when(widthMode){
             MeasureSpec.EXACTLY->widthSize
             MeasureSpec.AT_MOST->min(defaultButtonWidth, widthSize)
-            MeasureSpec.UNSPECIFIED->defaultButtonWidth
-            else->defaultButtonWidth
+            MeasureSpec.UNSPECIFIED->ViewGroup.LayoutParams.WRAP_CONTENT
+            else->ViewGroup.LayoutParams.WRAP_CONTENT
         }
         val height= when(heightMode){
             MeasureSpec.EXACTLY->heightSize
             MeasureSpec.AT_MOST->min(defaultButtonHeight, heightSize)
-            MeasureSpec.UNSPECIFIED->defaultButtonHeight
-            else->defaultButtonHeight
+            MeasureSpec.UNSPECIFIED->ViewGroup.LayoutParams.WRAP_CONTENT
+            else->ViewGroup.LayoutParams.WRAP_CONTENT
         }
 
         // Para redimencionar el textview cuando cambie el ancho del contenMain que es el relative layout
         textView.measure(width, height)
         val minWidth = resources.getDimensionPixelSize(R.dimen.button_width_default) // Define esta dimensión en tus recursos
-        textView.layoutParams.width =if (width < minWidth) minWidth else width
+        //textView.layoutParams.width =if (width < minWidth) minWidth else width
+
+        val textViewHeight = textView.measuredHeight
+        val textViewWidth = textView.measuredWidth
+        val newWidth=if(width< textViewWidth) textView.measuredWidth + 96 else width + 22
+        val newHeight = 8 + textViewHeight + 8
+
+        textView.measure(newWidth.toInt(), height)
         //textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
 
         // Si no colocamos  measureChild el texto dentro de textview no se centra
         measureChild(textView,width,height)
-        setMeasuredDimension(width, height)
+        setMeasuredDimension(newWidth.toInt(), height)
+
+        // Ajustar el ancho del TextView al nuevo ancho del contenedor
+        val layoutParams = textView.layoutParams
+        layoutParams.width = newWidth - paddingLeft - paddingRight
+        textView.layoutParams = layoutParams
+
+        super.onMeasure(
+            MeasureSpec.makeMeasureSpec(newWidth, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(newHeight, MeasureSpec.EXACTLY)
+        )
     }
     companion object {
         fun convertDpToPixels(dp: Float, context: Context): Int {
