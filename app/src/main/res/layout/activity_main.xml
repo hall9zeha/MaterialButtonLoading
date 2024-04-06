@@ -11,8 +11,7 @@
         android:id="@+id/btnLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:text="Inicio de sesión"
-        app:textSize="15sp"
+        app:text="Iniciar"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

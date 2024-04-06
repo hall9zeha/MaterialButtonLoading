@@ -79,12 +79,10 @@ class ButtonLoading @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> {
                  startRipple(event.x, event.y)
             }
-
             MotionEvent.ACTION_UP -> {
                 stopRipple()
             }
         }
-
         return false
     }
 
@@ -94,16 +92,15 @@ class ButtonLoading @JvmOverloads constructor(
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-
-        textView.setPadding(22,32,22,22)
+        // Setup textView
+        textView.setPadding(22,32,22,36)
         // Configurar el texto y otros atributos del TextView según sea necesario
         textView.typeface =  Typeface.create("sans-serif-medium", Typeface.NORMAL)
-
         textView.gravity= Gravity.CENTER_HORIZONTAL
         params.addRule(CENTER_IN_PARENT)
         textView.layoutParams=params
 
-        // Creating a circular progress drawable
+        // Setup progress drawable
         circularProgressDrawable.strokeWidth = 10f
         circularProgressDrawable.centerRadius = 30f
         circularProgressDrawable.setColorSchemeColors(progressColor!!)
@@ -112,12 +109,12 @@ class ButtonLoading @JvmOverloads constructor(
         // Setup imageView
         imageView.setImageDrawable(circularProgressDrawable)
         imageView.layoutParams=params
-        //imageView.visibility = View.GONE
+
         addView(textView)
         addView(imageView)
 
     }
-    @SuppressLint("CustomViewStyleable")
+    @SuppressLint("CustomViewStyleable", "ResourceType")
     private fun loadAttr(attrs: AttributeSet?, defStyleAttr: Int) {
         val arr = context.obtainStyledAttributes(
             attrs,
@@ -160,7 +157,7 @@ class ButtonLoading @JvmOverloads constructor(
         setTextSize(attrTextSize)
         setAllCaps(attrAllCaps)
     }
-    // # region functions public
+    // # region public functions
     fun setLoading(loading: Boolean){
         isEnabled=!loading
        isClickable = !loading
@@ -193,12 +190,7 @@ class ButtonLoading @JvmOverloads constructor(
         if(isAllCaps)textView.isAllCaps=true
         else textView.isAllCaps=false
     }
-    override fun setEnabled(enabled: Boolean) {
-        super.setEnabled(enabled)
-
-
-    }
-    // # end region
+   // # end region
 
     /*Ripple try*/
 
@@ -317,26 +309,38 @@ class ButtonLoading @JvmOverloads constructor(
         }
 
         // Para redimencionar el textview cuando cambie el ancho del contenMain que es el relative layout
-        textView.measure(width, height)
-        val minWidth = resources.getDimensionPixelSize(R.dimen.button_width_default) // Define esta dimensión en tus recursos
-        //textView.layoutParams.width =if (width < minWidth) minWidth else width
-
         val textViewHeight = textView.measuredHeight
         val textViewWidth = textView.measuredWidth
-        val newWidth=if(width< textViewWidth) textView.measuredWidth + 96 else width + 22
-        val newHeight = 8 + textViewHeight + 8
+        val newWidth:Int
+        var newHeight:Int
+        if(widthMode == MeasureSpec.EXACTLY) {
+            newWidth = width + 22
+            if(heightMode == MeasureSpec.EXACTLY){
+                newHeight = height
+            }else{
+                newHeight = textView.measuredHeight
+            }
+        }else{
+            newWidth = if (width < textViewWidth) textView.measuredWidth + 48 else width - 48
 
-        textView.measure(newWidth.toInt(), height)
-        //textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            if(heightMode == MeasureSpec.EXACTLY){
+                newHeight = height
+            }else{
+                newHeight = textView.measuredHeight
+            }
+        }
+
+        textView.measure(newWidth, newHeight)
 
         // Si no colocamos  measureChild el texto dentro de textview no se centra
         measureChild(imageView,width,height)
-        measureChild(textView,width,height)
-        setMeasuredDimension(newWidth.toInt(), height)
+        measureChild(textView,height,width)
+        setMeasuredDimension(newWidth, newHeight)
 
         // Ajustar el ancho del TextView al nuevo ancho del contenedor
         val layoutParams = textView.layoutParams
         layoutParams.width = newWidth - paddingLeft - paddingRight
+        layoutParams.height = newHeight + paddingTop + paddingBottom
         textView.layoutParams = layoutParams
 
         super.onMeasure(
