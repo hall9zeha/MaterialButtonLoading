@@ -10,6 +10,7 @@
         <attr name="colorStroke" format="string|reference"/>
         <attr name="colorBackground" format="string|reference"/>
         <attr name="colorRipple" format="string|reference"/>
+        <attr name="progressColor" format="string|reference"/>
         <attr name="loading" format="boolean"/>
         <attr name="enabled" format="boolean"/>
         <attr name="progressIndicator" format="reference"/>

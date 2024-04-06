@@ -2,7 +2,6 @@ package com.barryzeha.materialbuttonloading.components
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,24 +9,24 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Typeface
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
-import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.barryzeha.materialbuttonloading.R
 import com.barryzeha.materialbuttonloading.common.adjustAlpha
 import com.barryzeha.materialbuttonloading.common.alpha
+import com.barryzeha.materialbuttonloading.common.convertColorReferenceToHex
+import kotlin.math.log
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 
 /**
@@ -47,10 +46,14 @@ class ButtonLoading @JvmOverloads constructor(
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val path = Path()
     private val rect = RectF()
+    private var defaultTextColor:Int?=null
     private var colorStroke:Int? = null
     private var backgroundColor:Int?=null
+    private var progressColor:Int?=null
 
     private var textView: TextView
+    private var imageView:ImageView
+    private var circularProgressDrawable:CircularProgressDrawable
 
     private var rippleX: Float? = null
     private var rippleY: Float? = null
@@ -62,8 +65,11 @@ class ButtonLoading @JvmOverloads constructor(
     init {
         setBackgroundColor(Color.TRANSPARENT)
         textView = TextView(context)
-        setUpChildViews()
+        imageView = ImageView(context)
+        circularProgressDrawable = CircularProgressDrawable(context)
+
         loadAttr(attrs, defStyleAttr)
+        setUpChildViews()
         setOnTouchListener(this)
 
     }
@@ -88,6 +94,7 @@ class ButtonLoading @JvmOverloads constructor(
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
+
         textView.setPadding(22,32,22,22)
         // Configurar el texto y otros atributos del TextView según sea necesario
         textView.typeface =  Typeface.create("sans-serif-medium", Typeface.NORMAL)
@@ -96,7 +103,19 @@ class ButtonLoading @JvmOverloads constructor(
         params.addRule(CENTER_IN_PARENT)
         textView.layoutParams=params
 
+        // Creating a circular progress drawable
+        circularProgressDrawable.strokeWidth = 10f
+        circularProgressDrawable.centerRadius = 30f
+        circularProgressDrawable.setColorSchemeColors(progressColor!!)
+        circularProgressDrawable.start()
+
+        // Setup imageView
+        imageView.setImageDrawable(circularProgressDrawable)
+        imageView.layoutParams=params
+        //imageView.visibility = View.GONE
         addView(textView)
+        addView(imageView)
+
     }
     @SuppressLint("CustomViewStyleable")
     private fun loadAttr(attrs: AttributeSet?, defStyleAttr: Int) {
@@ -108,47 +127,50 @@ class ButtonLoading @JvmOverloads constructor(
         )
 
         val array: TypedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.textColorPrimaryInverseNoDisable,android.R.attr.colorPrimary))
-        val defaultTextColor = array.getColor(0, 0)
-        val defaultColor = array.getColor(1, 0)
+        defaultTextColor = array.getColor(0, 0)
+        val defaultButtonColor = array.getColor(1, 0)
 
         val buttonText = arr.getString(R.styleable.loadingButtonStyleable_text)
         cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 50F)
-        val loading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
-        val enabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
-        val widthStroke = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,1f)
-        val colorText = arr.getString(R.styleable.loadingButtonStyleable_textColor)
-        val textSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,0)
-        val allCaps = arr.getBoolean(R.styleable.loadingButtonStyleable_allCaps,false)
-        val strokeColor = arr.getString(R.styleable.loadingButtonStyleable_colorStroke)
-        val colorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
-        val colorRipple = arr.getString(R.styleable.loadingButtonStyleable_colorRipple)
+        val attrLoading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
+        val attrEnabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
+        val attrStrokeWidth = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,1f)
+        val attrTextColor = arr.getString(R.styleable.loadingButtonStyleable_textColor)
+        val attrTextSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,0)
+        val attrAllCaps = arr.getBoolean(R.styleable.loadingButtonStyleable_allCaps,false)
+        val attrColorStroke = arr.getString(R.styleable.loadingButtonStyleable_colorStroke)
+        val attrColorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
+        val attrColorRipple = arr.getString(R.styleable.loadingButtonStyleable_colorRipple)
+        val attrProgressColor = arr.getString(R.styleable.loadingButtonStyleable_progressColor)
 
-        val textColor = if(!colorText.isNullOrEmpty()) Color.parseColor(colorText) else defaultTextColor
-        colorStroke = if(!strokeColor.isNullOrEmpty()) Color.parseColor(strokeColor) else defaultColor
-        backgroundColor = if(!colorBackground.isNullOrEmpty()) Color.parseColor(colorBackground) else defaultColor
-        rippleColor = if(!colorRipple.isNullOrEmpty()) Color.parseColor(colorRipple) else rippleColor
-        strokeWidth = widthStroke
+        val textColor = if(!attrTextColor.isNullOrEmpty()) Color.parseColor(attrTextColor) else defaultTextColor!!
+        colorStroke = if(!attrColorStroke.isNullOrEmpty()) Color.parseColor(attrColorStroke) else defaultButtonColor
+        backgroundColor = if(!attrColorBackground.isNullOrEmpty()) Color.parseColor(attrColorBackground) else defaultButtonColor
+        rippleColor = if(!attrColorRipple.isNullOrEmpty()) Color.parseColor(attrColorRipple) else rippleColor
+        progressColor = if(!attrProgressColor.isNullOrEmpty()) Color.parseColor(attrProgressColor) else convertColorReferenceToHex(defaultTextColor)
+        strokeWidth = attrStrokeWidth
 
         arr.recycle()
-        isEnabled = enabled
+        isEnabled = attrEnabled
         setText(buttonText)
 
-        setLoading(loading)
-        setLoadingColor(defaultTextColor)
+        setLoading(attrLoading)
+        setLoadingColor(defaultTextColor!!)
         setTextColor(textColor)
-        setTextSize(textSize)
-        setAllCaps(allCaps)
+        setTextSize(attrTextSize)
+        setAllCaps(attrAllCaps)
     }
     // # region functions public
     fun setLoading(loading: Boolean){
-        isClickable = !loading //Disable clickable when loading
+        isEnabled=!loading
+       isClickable = !loading
         if(loading){
-            /*buttonTextView.visibility = View.GONE
-            progressBar.visibility = View.VISIBLE*/
+            textView.visibility = View.INVISIBLE
+            imageView.visibility = View.VISIBLE
 
         } else {
-           /* buttonTextView.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE*/
+           textView.visibility = View.VISIBLE
+            imageView.visibility = View.GONE
         }
     }
     fun setTextColor(color:Int){
@@ -156,7 +178,7 @@ class ButtonLoading @JvmOverloads constructor(
     }
 
     fun setLoadingColor(color:Int){
-
+        progressColor= convertColorReferenceToHex(color)
     }
     fun setText(text : String?) {
        textView.text=if(text.isNullOrEmpty())"Button" else text
@@ -173,6 +195,7 @@ class ButtonLoading @JvmOverloads constructor(
     }
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
+
 
     }
     // # end region
@@ -307,6 +330,7 @@ class ButtonLoading @JvmOverloads constructor(
         //textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
 
         // Si no colocamos  measureChild el texto dentro de textview no se centra
+        measureChild(imageView,width,height)
         measureChild(textView,width,height)
         setMeasuredDimension(newWidth.toInt(), height)
 
