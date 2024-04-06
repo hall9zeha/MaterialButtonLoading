@@ -157,7 +157,7 @@ class ButtonLoading @JvmOverloads constructor(
         setTextSize(attrTextSize)
         setAllCaps(attrAllCaps)
     }
-    // # region public functions
+
     fun setLoading(loading: Boolean){
         isEnabled=!loading
        isClickable = !loading
@@ -190,15 +190,10 @@ class ButtonLoading @JvmOverloads constructor(
         if(isAllCaps)textView.isAllCaps=true
         else textView.isAllCaps=false
     }
-   // # end region
-
-    /*Ripple try*/
-
     private val ripplePaint = Paint().apply {
         color = backgroundColor!!
 
     }
-
     private val animationExpand = object : Runnable {
         override fun run() {
             rippleRadius?.let { radius ->
@@ -243,8 +238,6 @@ class ButtonLoading @JvmOverloads constructor(
         }
     }
 
-
-    /*Ripple try*/
     override fun onDraw(canvas: Canvas) {
         val width = width.toFloat()
         val height = height.toFloat()
@@ -260,7 +253,6 @@ class ButtonLoading @JvmOverloads constructor(
         }?.run{
             cornerRadius
         }
-
 
         // Dibujar el fondo redondeado
         paint.style = Paint.Style.FILL
@@ -279,8 +271,6 @@ class ButtonLoading @JvmOverloads constructor(
         paint.strokeWidth = convertDpToPixels(strokeWidth?:1f,context).toFloat()
         canvas.drawRoundRect(rect, corners, corners, paint)
         canvas.drawRoundRect(rect, corners, corners, ripplePaint)
-
-
     }
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
