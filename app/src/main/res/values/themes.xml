@@ -6,4 +6,7 @@
     </style>
 
     <style name="Theme.MaterialButtonLoading" parent="Base.Theme.MaterialButtonLoading" />
+    <style name="MyButtonTheme" parent="Widget.MaterialComponents.Button">
+
+    </style>
 </resources>

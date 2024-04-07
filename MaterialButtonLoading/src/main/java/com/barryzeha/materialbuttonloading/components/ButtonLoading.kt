@@ -1,7 +1,9 @@
 package com.barryzeha.materialbuttonloading.components
 
+
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Color
@@ -19,13 +21,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.barryzeha.materialbuttonloading.R
 import com.barryzeha.materialbuttonloading.common.adjustAlpha
 import com.barryzeha.materialbuttonloading.common.alpha
 import com.barryzeha.materialbuttonloading.common.convertColorReferenceToHex
-import kotlin.math.log
 import kotlin.math.min
 
 
@@ -123,9 +123,25 @@ class ButtonLoading @JvmOverloads constructor(
             0
         )
 
-        val array: TypedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.textColorPrimaryInverseNoDisable,android.R.attr.colorPrimary))
-        defaultTextColor = array.getColor(0, 0)
-        val defaultButtonColor = array.getColor(1, 0)
+        val arrayColors: TypedArray = context.obtainStyledAttributes(intArrayOf(
+            android.R.attr.textColorPrimaryInverseNoDisable,
+            android.R.attr.colorPrimary,
+            com.google.android.material.R.attr.colorOnPrimary
+            ))
+
+        val nightModeFlags = context.resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK
+        defaultTextColor = try {
+            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+                arrayColors.getColor(2,0)
+            } else {
+                arrayColors.getColor(0, 0)
+            }
+        }catch(e:Exception){
+            arrayColors.getColor(1,0)
+        }
+
+        val defaultButtonColor = arrayColors.getColor(1, 0)
 
         val buttonText = arr.getString(R.styleable.loadingButtonStyleable_text)
         cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 50F)
@@ -160,7 +176,7 @@ class ButtonLoading @JvmOverloads constructor(
 
     fun setLoading(loading: Boolean){
         isEnabled=!loading
-       isClickable = !loading
+        isClickable = !loading
         if(loading){
             textView.visibility = View.INVISIBLE
             imageView.visibility = View.VISIBLE
@@ -311,7 +327,7 @@ class ButtonLoading @JvmOverloads constructor(
                 newHeight = textView.measuredHeight
             }
         }else{
-            newWidth = if (width < textViewWidth) textView.measuredWidth + 48 else width - 48
+            newWidth = if (width < textViewWidth) textView.measuredWidth + 48 else width - 56
 
             if(heightMode == MeasureSpec.EXACTLY){
                 newHeight = height
