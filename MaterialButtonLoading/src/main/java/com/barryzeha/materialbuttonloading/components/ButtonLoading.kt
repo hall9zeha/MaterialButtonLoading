@@ -182,7 +182,7 @@ class ButtonLoading @JvmOverloads constructor(
 
         } else {
            textView.visibility = View.VISIBLE
-            imageView.visibility = View.GONE
+            imageView.visibility = View.INVISIBLE
         }
     }
     fun setTextColor(color:Int){
@@ -259,9 +259,9 @@ class ButtonLoading @JvmOverloads constructor(
         val width = width.toFloat()
         val height = height.toFloat()
 
-        val rectLeft = padding.toFloat()
+        val rectLeft = 6f
         val rectTop = padding.toFloat()
-        val rectRight = width - 4f
+        val rectRight = width -1f
         val rectBottom = height - padding.toFloat()
 
         val corners=
@@ -286,6 +286,7 @@ class ButtonLoading @JvmOverloads constructor(
 
         paint.color = colorStroke!!
         paint.strokeWidth = convertDpToPixels(strokeWidth?:1f,context).toFloat()
+
         canvas.drawRoundRect(rect, corners, corners, paint)
         canvas.drawRoundRect(rect, corners, corners, ripplePaint)
     }
@@ -321,14 +322,17 @@ class ButtonLoading @JvmOverloads constructor(
         val newWidth:Int
         var newHeight:Int
         if(widthMode == MeasureSpec.EXACTLY) {
-            newWidth = width + 22
+            newWidth = width
             if(heightMode == MeasureSpec.EXACTLY){
                 newHeight = height
             }else{
                 newHeight = textView.measuredHeight
             }
         }else{
-            newWidth = if (width < textViewWidth) textView.measuredWidth + 48 else width - 56
+           if (width < textViewWidth) { newWidth= textView.measuredWidth + 48 }
+           else { newWidth= if((textViewWidth + 48) > width) width + 22
+            else width - 56
+           }
 
             if(heightMode == MeasureSpec.EXACTLY){
                 newHeight = height
@@ -342,7 +346,7 @@ class ButtonLoading @JvmOverloads constructor(
 
         // Si no colocamos  measureChild el texto dentro de textview no se centra
         measureChild(imageView,width,height)
-        measureChild(textView,height,width)
+        measureChild(textView,newWidth,newHeight)
         setMeasuredDimension(newWidth, newHeight)
 
         // Ajustar el ancho del TextView al nuevo ancho del contenedor

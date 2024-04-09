@@ -1,5 +1,6 @@
 package com.barryzeha.materialbutton
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -8,6 +9,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.barryzeha.materialbuttonloading.components.ButtonLoading
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +31,15 @@ class MainActivity : AppCompatActivity() {
        val button = findViewById<ButtonLoading>(R.id.btnLoading)
         button.setLoading(false)
         button.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                launch(Dispatchers.Main){
+                    button.setLoading(true)
+                }
+                delay(3000)
+                launch(Dispatchers.Main) {
+                    button.setLoading(false)
+                }
+            }
             //Toast.makeText(this, "Hola mundo", Toast.LENGTH_SHORT).show()
         }
 

@@ -41,15 +41,15 @@
     <com.barryzeha.materialbuttonloading.components.ButtonLoading
         android:id="@+id/btnLoading"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:text="Iniciar"
-        app:cornerRadius="8dp"
+        android:layout_height="60dp"
+        app:text="Iniciar Sesion"
+        app:cornerRadius="32dp"
         app:layout_constraintStart_toStartOf="@id/tilPasswd"
         app:layout_constraintEnd_toEndOf="@id/tilPasswd"
         app:layout_constraintTop_toBottomOf="@id/tilPasswd"
         android:layout_marginTop="16dp"
         />
-   <!-- <com.google.android.material.button.MaterialButton
+    <!--<com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Button"
