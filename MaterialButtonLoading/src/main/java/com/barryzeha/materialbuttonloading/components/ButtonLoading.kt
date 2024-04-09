@@ -26,6 +26,7 @@ import com.barryzeha.materialbuttonloading.R
 import com.barryzeha.materialbuttonloading.common.adjustAlpha
 import com.barryzeha.materialbuttonloading.common.alpha
 import com.barryzeha.materialbuttonloading.common.convertColorReferenceToHex
+import com.barryzeha.materialbuttonloading.common.mColorList
 import kotlin.math.min
 
 
@@ -41,6 +42,10 @@ class ButtonLoading @JvmOverloads constructor(
     defStyleAttr:Int=0,
     ):RelativeLayout(context,attrs,defStyleAttr), View.OnTouchListener {
 
+    enum class StyleButton(val value:Int){
+        NORMAL_STYLE(0), OUTLINE_STYLE(1),TEXT_BUTTON_STYLE(2)
+    }
+    private var styleButton:Int=0
     private val padding=8
     private var cornerRadius:Float? = null
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -141,7 +146,7 @@ class ButtonLoading @JvmOverloads constructor(
         }
 
         val defaultButtonColor = arrayColors.getColor(1, 0)
-
+        styleButton = arr.getInt(R.styleable.loadingButtonStyleable_styleButton,0)
         val buttonText = arr.getString(R.styleable.loadingButtonStyleable_text)
         cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 50F)
         val attrLoading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
@@ -171,6 +176,7 @@ class ButtonLoading @JvmOverloads constructor(
         setTextColor(textColor)
         setTextSize(attrTextSize)
         setAllCaps(attrAllCaps)
+        setButtonStyle(styleButton)
     }
     // Public functions
     fun setLoading(loading: Boolean){
@@ -205,7 +211,45 @@ class ButtonLoading @JvmOverloads constructor(
         if(isAllCaps)textView.isAllCaps=true
         else textView.isAllCaps=false
     }
+    fun setButtonStyle(style:Int){
+        when(style){
+            StyleButton.NORMAL_STYLE.value->setButtonNormalStyle()
+            StyleButton.OUTLINE_STYLE.value->setOutlineStyle()
+            StyleButton.TEXT_BUTTON_STYLE.value->setTextButtonStyle()
+            else->setButtonNormalStyle()
+        }
+    }
     // Public functions
+
+    // Button styles
+    @SuppressLint("ResourceType")
+    private fun setOutlineStyle(){
+        backgroundColor = mColorList(context).getColor(3,1)
+        setTextColor(mColorList(context).getColor(1,1))
+        strokeWidth=TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_PX,
+            2.toFloat(),
+            resources.displayMetrics
+        )
+        progressColor= mColorList(context).getColor(1,1)
+    }
+    private fun setTextButtonStyle(){
+        strokeWidth=0f
+        colorStroke=mColorList(context).getColor(3,1)
+        backgroundColor = mColorList(context).getColor(3,1)
+        setTextColor(mColorList(context).getColor(1,1))
+        progressColor= mColorList(context).getColor(1,1)
+        rippleColor=mColorList(context).getColor(3,1)
+    }
+    private fun setButtonNormalStyle(){
+        strokeWidth=0f
+        colorStroke=mColorList(context).getColor(1,1)
+        backgroundColor = mColorList(context).getColor(1,1)
+        setTextColor(mColorList(context).getColor(0,1))
+        progressColor= mColorList(context).getColor(2,1)
+        rippleColor=0x88888888.toInt()
+    }
+    // Button styles
 
     private val ripplePaint = Paint().apply {
         color = backgroundColor!!
@@ -261,7 +305,7 @@ class ButtonLoading @JvmOverloads constructor(
 
         val rectLeft = 6f
         val rectTop = padding.toFloat()
-        val rectRight = width -1f
+        val rectRight = width -4f
         val rectBottom = height - padding.toFloat()
 
         val corners=
@@ -321,22 +365,24 @@ class ButtonLoading @JvmOverloads constructor(
         val textViewWidth = textView.measuredWidth
         val newWidth:Int
         var newHeight:Int
-        if(widthMode == MeasureSpec.EXACTLY) {
+        if (widthMode == MeasureSpec.EXACTLY) {
             newWidth = width
-            if(heightMode == MeasureSpec.EXACTLY){
+            if (heightMode == MeasureSpec.EXACTLY) {
                 newHeight = height
-            }else{
+            } else {
                 newHeight = textView.measuredHeight
             }
-        }else{
-           if (width < textViewWidth) { newWidth= textView.measuredWidth + 48 }
-           else { newWidth= if((textViewWidth + 48) > width) width + 22
-            else width - 56
-           }
+        } else {
+            if (width < textViewWidth) {
+                newWidth = textView.measuredWidth + 48
+            } else {
+                newWidth = if ((textViewWidth + 48) > width) width + 22
+                else width - 56
+            }
 
-            if(heightMode == MeasureSpec.EXACTLY){
+            if (heightMode == MeasureSpec.EXACTLY) {
                 newHeight = height
-            }else{
+            } else {
                 newHeight = textView.measuredHeight
             }
 

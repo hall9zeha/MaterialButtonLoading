@@ -1,5 +1,6 @@
 package com.barryzeha.materialbuttonloading.common
 
+import android.content.Context
 import android.graphics.Color
 import kotlin.math.roundToInt
 
@@ -24,3 +25,9 @@ fun convertColorReferenceToHex(colorRef:Int?):Int{
     }
     return 0
 }
+fun mColorList(context:Context)=
+    context.obtainStyledAttributes(intArrayOf(
+        android.R.attr.textColorPrimaryInverseNoDisable,
+        android.R.attr.colorPrimary,
+        com.google.android.material.R.attr.colorOnPrimary,
+        com.google.android.material.R.attr.colorSurface))
