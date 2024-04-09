@@ -7,21 +7,54 @@
     android:layout_height="match_parent"
     tools:context="com.barryzeha.materialbutton.MainActivity"
     >
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilname"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="You username"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilPasswd"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        style="@style/ThemeOverlay.Material3.TextInputEditText.OutlinedBox"
+        app:layout_constraintStart_toStartOf="@id/tilname"
+        app:layout_constraintEnd_toEndOf="@id/tilname"
+        app:layout_constraintTop_toBottomOf="@id/tilname"
+        android:layout_marginTop="24dp"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="You Password"/>
+    </com.google.android.material.textfield.TextInputLayout>
     <com.barryzeha.materialbuttonloading.components.ButtonLoading
         android:id="@+id/btnLoading"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:text="Iniciar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <com.google.android.material.button.MaterialButton
+        app:cornerRadius="8dp"
+        app:layout_constraintStart_toStartOf="@id/tilPasswd"
+        app:layout_constraintEnd_toEndOf="@id/tilPasswd"
+        app:layout_constraintTop_toBottomOf="@id/tilPasswd"
+        android:layout_marginTop="16dp"
+        />
+   <!-- <com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Button"
         app:layout_constraintTop_toBottomOf="@id/btnLoading"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -59,7 +59,7 @@ class ButtonLoading @JvmOverloads constructor(
     private var rippleY: Float? = null
     private var rippleRadius: Float? = null
     private var strokeWidth:Float?=null
-    var maxRippleRadius: Float = 200f // Retrieve from resources
+    var maxRippleRadius: Float = 200f
     var rippleColor: Int = 0x88888888.toInt()
 
     init {
@@ -71,7 +71,6 @@ class ButtonLoading @JvmOverloads constructor(
         loadAttr(attrs, defStyleAttr)
         setUpChildViews()
         setOnTouchListener(this)
-
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -96,7 +95,7 @@ class ButtonLoading @JvmOverloads constructor(
         textView.setPadding(22,32,22,36)
         // Configurar el texto y otros atributos del TextView según sea necesario
         textView.typeface =  Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        textView.gravity= Gravity.CENTER_HORIZONTAL
+        textView.gravity= Gravity.CENTER
         params.addRule(CENTER_IN_PARENT)
         textView.layoutParams=params
 
@@ -173,7 +172,7 @@ class ButtonLoading @JvmOverloads constructor(
         setTextSize(attrTextSize)
         setAllCaps(attrAllCaps)
     }
-
+    // Public functions
     fun setLoading(loading: Boolean){
         isEnabled=!loading
         isClickable = !loading
@@ -206,6 +205,8 @@ class ButtonLoading @JvmOverloads constructor(
         if(isAllCaps)textView.isAllCaps=true
         else textView.isAllCaps=false
     }
+    // Public functions
+
     private val ripplePaint = Paint().apply {
         color = backgroundColor!!
 
@@ -260,7 +261,7 @@ class ButtonLoading @JvmOverloads constructor(
 
         val rectLeft = padding.toFloat()
         val rectTop = padding.toFloat()
-        val rectRight = width - padding.toFloat()
+        val rectRight = width - 4f
         val rectBottom = height - padding.toFloat()
 
         val corners=
@@ -334,6 +335,7 @@ class ButtonLoading @JvmOverloads constructor(
             }else{
                 newHeight = textView.measuredHeight
             }
+
         }
 
         textView.measure(newWidth, newHeight)
