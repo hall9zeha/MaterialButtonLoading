@@ -2,6 +2,8 @@ package com.barryzeha.materialbuttonloading.common
 
 import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
+import android.view.View
 import kotlin.math.roundToInt
 
 
@@ -25,6 +27,11 @@ fun convertColorReferenceToHex(colorRef:Int?):Int{
     }
     return 0
 }
+fun appliedDimension(size:Int, view: View)= TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_PX,
+    size.toFloat(),
+    view.resources.displayMetrics
+)
 fun mColorList(context:Context)=
     context.obtainStyledAttributes(intArrayOf(
         android.R.attr.textColorPrimaryInverseNoDisable,

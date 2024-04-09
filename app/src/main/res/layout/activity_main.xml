@@ -44,7 +44,6 @@
         android:layout_height="60dp"
         app:text="Iniciar Sesion"
         app:cornerRadius="32dp"
-
         app:layout_constraintStart_toStartOf="@id/tilPasswd"
         app:layout_constraintEnd_toEndOf="@id/tilPasswd"
         app:layout_constraintTop_toBottomOf="@id/tilPasswd"

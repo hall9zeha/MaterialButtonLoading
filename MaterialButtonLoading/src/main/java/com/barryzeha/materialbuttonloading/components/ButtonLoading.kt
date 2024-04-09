@@ -25,6 +25,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.barryzeha.materialbuttonloading.R
 import com.barryzeha.materialbuttonloading.common.adjustAlpha
 import com.barryzeha.materialbuttonloading.common.alpha
+import com.barryzeha.materialbuttonloading.common.appliedDimension
 import com.barryzeha.materialbuttonloading.common.convertColorReferenceToHex
 import com.barryzeha.materialbuttonloading.common.mColorList
 import kotlin.math.min
@@ -35,6 +36,11 @@ import kotlin.math.min
  * Created by Barry Zea H. on 30/3/24.
  * Copyright (c)  All rights reserved.
  **/
+
+const val TEXT_COLOR_PRIMARY_INVERSE = 0
+const val COLOR_PRIMARY=1
+const val MATERIAL_COLOR_ON_PRIMARY=2
+const val MATERIAL_COLOR_SURFACE=3
 
 class ButtonLoading @JvmOverloads constructor(
     context:Context,
@@ -127,25 +133,19 @@ class ButtonLoading @JvmOverloads constructor(
             0
         )
 
-        val arrayColors: TypedArray = context.obtainStyledAttributes(intArrayOf(
-            android.R.attr.textColorPrimaryInverseNoDisable,
-            android.R.attr.colorPrimary,
-            com.google.android.material.R.attr.colorOnPrimary
-            ))
-
         val nightModeFlags = context.resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK
         defaultTextColor = try {
             if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
-                arrayColors.getColor(2,0)
+                mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
             } else {
-                arrayColors.getColor(0, 0)
+                mColorList(context).getColor(TEXT_COLOR_PRIMARY_INVERSE, TEXT_COLOR_PRIMARY_INVERSE)
             }
         }catch(e:Exception){
-            arrayColors.getColor(1,0)
+            mColorList(context).getColor(COLOR_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
         }
 
-        val defaultButtonColor = arrayColors.getColor(1, 0)
+        val defaultButtonColor = mColorList(context).getColor(COLOR_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
         styleButton = arr.getInt(R.styleable.loadingButtonStyleable_styleButton,0)
         val buttonText = arr.getString(R.styleable.loadingButtonStyleable_text)
         cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 50F)
@@ -224,29 +224,25 @@ class ButtonLoading @JvmOverloads constructor(
     // Button styles
     @SuppressLint("ResourceType")
     private fun setOutlineStyle(){
-        backgroundColor = mColorList(context).getColor(3,1)
-        setTextColor(mColorList(context).getColor(1,1))
-        strokeWidth=TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_PX,
-            2.toFloat(),
-            resources.displayMetrics
-        )
-        progressColor= mColorList(context).getColor(1,1)
+        backgroundColor = mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
+        setTextColor(mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
+        strokeWidth= appliedDimension(COLOR_PRIMARY,this)
+        progressColor= mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
     }
     private fun setTextButtonStyle(){
         strokeWidth=0f
-        colorStroke=mColorList(context).getColor(3,1)
-        backgroundColor = mColorList(context).getColor(3,1)
-        setTextColor(mColorList(context).getColor(1,1))
-        progressColor= mColorList(context).getColor(1,1)
-        rippleColor=mColorList(context).getColor(3,1)
+        colorStroke=mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
+        backgroundColor = mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
+        setTextColor(mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
+        progressColor= mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
+        rippleColor=mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
     }
     private fun setButtonNormalStyle(){
         strokeWidth=0f
-        colorStroke=mColorList(context).getColor(1,1)
-        backgroundColor = mColorList(context).getColor(1,1)
-        setTextColor(mColorList(context).getColor(0,1))
-        progressColor= mColorList(context).getColor(2,1)
+        colorStroke=mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
+        backgroundColor = mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
+        setTextColor(mColorList(context).getColor(TEXT_COLOR_PRIMARY_INVERSE, COLOR_PRIMARY))
+        progressColor= mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
         rippleColor=0x88888888.toInt()
     }
     // Button styles
@@ -329,7 +325,7 @@ class ButtonLoading @JvmOverloads constructor(
         paint.style = Paint.Style.STROKE
 
         paint.color = colorStroke!!
-        paint.strokeWidth = convertDpToPixels(strokeWidth?:1f,context).toFloat()
+        paint.strokeWidth = convertDpToPixels(appliedDimension(strokeWidth!!.toInt(),this) ?:1f,context).toFloat()
 
         canvas.drawRoundRect(rect, corners, corners, paint)
         canvas.drawRoundRect(rect, corners, corners, ripplePaint)
