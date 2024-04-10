@@ -238,7 +238,7 @@ class ButtonLoading @JvmOverloads constructor(
         backgroundColor = if(backgroundColor==defaultButtonColor) null else backgroundColor
         textColor=if(textColor==defaultTextColor)null else textColor
         progressColor=if(progressColor==defaultTextColor) null else progressColor
-
+        rippleColor = rippleColor?:mColorList(context).getColor(COLOR_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
         backgroundColor=backgroundColor?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         strokeWidth=strokeWidth?:appliedDimension(1,this)
@@ -268,8 +268,7 @@ class ButtonLoading @JvmOverloads constructor(
     // Button styles
 
     private val ripplePaint = Paint().apply {
-        color = backgroundColor!!
-
+        color = backgroundColor!!.adjustAlpha(0.2f)
     }
     private val animationExpand = object : Runnable {
         override fun run() {
@@ -287,9 +286,9 @@ class ButtonLoading @JvmOverloads constructor(
         override fun run() {
            ripplePaint.color.let { color ->
                 if (color.alpha > 10) {
-                    ripplePaint.color = color.adjustAlpha(0.6f)
+                    ripplePaint.color = color.adjustAlpha(0.5f)
                     invalidate()
-                    postDelayed(this, 20L)
+                    postDelayed(this, 15L)
                 } else {
                     rippleX = null
                     rippleY = null
@@ -305,7 +304,7 @@ class ButtonLoading @JvmOverloads constructor(
         rippleX = x
         rippleY = y
         rippleRadius = maxRippleRadius * 0.15f
-        ripplePaint.color = rippleColor!!
+        ripplePaint.color = rippleColor!!.adjustAlpha(0.2f)
         animationExpand.run()
     }
 
@@ -356,7 +355,9 @@ class ButtonLoading @JvmOverloads constructor(
         paint.color = colorStroke!!
         //paint.strokeWidth = convertDpToPixels(appliedDimension(strokeWidth!!.toInt(),this) ?:1f,context).toFloat()
         paint.strokeWidth = strokeWidth
+        // Primero agregamos el efecto ripple
         canvas.drawRoundRect(rect, corners, corners, ripplePaint)
+        // Luego nuestro diseño principal
         canvas.drawRoundRect(rect, corners, corners, paint)
     }
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
