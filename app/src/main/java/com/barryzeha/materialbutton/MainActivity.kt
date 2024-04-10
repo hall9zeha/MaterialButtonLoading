@@ -1,7 +1,9 @@
 package com.barryzeha.materialbutton
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -28,7 +30,14 @@ class MainActivity : AppCompatActivity() {
             insets
 
         }
-       val button = findViewById<ButtonLoading>(R.id.btnLoading)
+
+        val contentMain = findViewById<LinearLayout>(R.id.main)
+        val btn = ButtonLoading(this)
+        btn.setButtonStyle(2)
+        btn.setAllCaps(false)
+        btn.setLoading(false)
+        contentMain.addView(btn)
+      /* val button = findViewById<ButtonLoading>(R.id.btnLoading)
         button.setLoading(false)
         button.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
@@ -41,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             //Toast.makeText(this, "Hola mundo", Toast.LENGTH_SHORT).show()
-        }
+        }*/
 
     }
 }
