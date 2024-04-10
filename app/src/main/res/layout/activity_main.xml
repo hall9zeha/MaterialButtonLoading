@@ -45,7 +45,7 @@
         app:text="Iniciar Sesion"
         app:cornerRadius="32dp"
         app:loading="false"
-        app:styleButton="text"
+        app:styleButton="outline"
         app:layout_constraintStart_toStartOf="@id/tilPasswd"
         app:layout_constraintEnd_toEndOf="@id/tilPasswd"
         app:layout_constraintTop_toBottomOf="@id/tilPasswd"

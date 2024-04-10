@@ -167,7 +167,7 @@ class ButtonLoading @JvmOverloads constructor(
         backgroundColor = if(!attrColorBackground.isNullOrEmpty()) Color.parseColor(attrColorBackground) else defaultButtonColor
         rippleColor = if(!attrColorRipple.isNullOrEmpty()) Color.parseColor(attrColorRipple) else rippleColor
         progressColor = if(!attrProgressColor.isNullOrEmpty()) Color.parseColor(attrProgressColor) else convertColorReferenceToHex(defaultTextColor)
-        strokeWidth = attrStrokeWidth
+
 
         arr.recycle()
         isEnabled = attrEnabled
@@ -179,6 +179,7 @@ class ButtonLoading @JvmOverloads constructor(
         setTextSize(attrTextSize)
         setAllCaps(attrAllCaps)
         setButtonStyle(styleButton)
+        setStrokeWidth(attrStrokeWidth)
 
     }
     // Public functions
@@ -213,6 +214,9 @@ class ButtonLoading @JvmOverloads constructor(
             textView.setTextSize(15f)
         }else{ textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,size.toFloat())}
     }
+    fun setStrokeWidth(size:Float){
+        strokeWidth = convertDpToPixels(size,context).toFloat()
+    }
     fun setAllCaps(isAllCaps:Boolean){
         if(isAllCaps)textView.isAllCaps=true
         else textView.isAllCaps=false
@@ -236,7 +240,8 @@ class ButtonLoading @JvmOverloads constructor(
 
         backgroundColor=backgroundColor?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
-        strokeWidth=strokeWidth?:appliedDimension(1,this)
+        //strokeWidth=strokeWidth?:appliedDimension(1,this)
+        setStrokeWidth(strokeWidth?:1f)
         progressColor = progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
 
     }
