@@ -21,6 +21,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.graphics.ColorUtils
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.barryzeha.materialbuttonloading.R
 import com.barryzeha.materialbuttonloading.common.adjustAlpha
@@ -153,7 +154,7 @@ class ButtonLoading @JvmOverloads constructor(
         cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 50F)
         val attrLoading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
         val attrEnabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
-        val attrStrokeWidth = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,1f)
+        val attrStrokeWidth = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,3f)
         val attrTextColor = arr.getString(R.styleable.loadingButtonStyleable_textColor)
         val attrTextSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,0)
         val attrAllCaps = arr.getBoolean(R.styleable.loadingButtonStyleable_allCaps,false)
@@ -167,7 +168,7 @@ class ButtonLoading @JvmOverloads constructor(
         backgroundColor = if(!attrColorBackground.isNullOrEmpty()) Color.parseColor(attrColorBackground) else defaultButtonColor
         rippleColor = if(!attrColorRipple.isNullOrEmpty()) Color.parseColor(attrColorRipple) else rippleColor
         progressColor = if(!attrProgressColor.isNullOrEmpty()) Color.parseColor(attrProgressColor) else convertColorReferenceToHex(defaultTextColor)
-
+        strokeWidth=attrStrokeWidth
 
         arr.recycle()
         isEnabled = attrEnabled
@@ -179,7 +180,7 @@ class ButtonLoading @JvmOverloads constructor(
         setTextSize(attrTextSize)
         setAllCaps(attrAllCaps)
         setButtonStyle(styleButton)
-        setStrokeWidth(attrStrokeWidth)
+
 
     }
     // Public functions
@@ -240,8 +241,8 @@ class ButtonLoading @JvmOverloads constructor(
 
         backgroundColor=backgroundColor?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
-        //strokeWidth=strokeWidth?:appliedDimension(1,this)
-        setStrokeWidth(strokeWidth?:1f)
+        strokeWidth=strokeWidth?:appliedDimension(1,this)
+
         progressColor = progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
 
     }
@@ -284,7 +285,7 @@ class ButtonLoading @JvmOverloads constructor(
 
     private val animationFade = object : Runnable {
         override fun run() {
-            ripplePaint.color.let { color ->
+           ripplePaint.color.let { color ->
                 if (color.alpha > 10) {
                     ripplePaint.color = color.adjustAlpha(0.6f)
                     invalidate()
@@ -323,7 +324,7 @@ class ButtonLoading @JvmOverloads constructor(
         val rectRight = width -4f
         val rectBottom = height - padding.toFloat()*/
 
-        val strokeWidth = convertDpToPixels(appliedDimension(strokeWidth!!.toInt(), this) ?: 1f, context).toFloat()
+        val strokeWidth = appliedDimension(strokeWidth!!.toInt(), this) ?: 1f
         val halfStrokeWidth = strokeWidth / 2f // Calcula la mitad del ancho del borde
 
         val rectLeft = 6f + halfStrokeWidth // Ajusta el borde hacia adentro sumando la mitad del ancho del borde
@@ -355,8 +356,8 @@ class ButtonLoading @JvmOverloads constructor(
         paint.color = colorStroke!!
         //paint.strokeWidth = convertDpToPixels(appliedDimension(strokeWidth!!.toInt(),this) ?:1f,context).toFloat()
         paint.strokeWidth = strokeWidth
-        canvas.drawRoundRect(rect, corners, corners, paint)
         canvas.drawRoundRect(rect, corners, corners, ripplePaint)
+        canvas.drawRoundRect(rect, corners, corners, paint)
     }
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
