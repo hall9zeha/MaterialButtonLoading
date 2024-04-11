@@ -266,14 +266,13 @@ class ButtonLoading @JvmOverloads constructor(
         backgroundColor = if(backgroundColor == defaultButtonColor) null else backgroundColor
         textColor=if(textColor==defaultTextColor)null else textColor
         progressColor=if(progressColor==defaultTextColor) null else progressColor
-        rippleColor=if(rippleColor==0x88888888.toInt()) null else rippleColor
         colorStroke=if(colorStroke==defaultButtonColor)null else colorStroke
 
         colorStroke=colorStroke?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         backgroundColor = backgroundColor?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         progressColor= progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
-        rippleColor=rippleColor?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
+        rippleColor=rippleColor?:mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, COLOR_PRIMARY)
 
     }
     private fun setButtonNormalStyle(){
