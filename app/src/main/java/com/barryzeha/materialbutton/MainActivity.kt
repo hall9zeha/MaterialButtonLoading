@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
             insets
 
         }
-
         val contentMain = findViewById<LinearLayout>(R.id.main)
 
         val layoutParams = ViewGroup.LayoutParams(
@@ -40,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         val btn = ButtonLoading(this)
-        btn.setButtonStyle(2)
+        btn.setButtonStyle(ButtonLoading.StyleButton.TEXT_BUTTON_STYLE)
         btn.setAllCaps(false)
         btn.setText("Iniciar sesión")
         btn.setLoading(false)

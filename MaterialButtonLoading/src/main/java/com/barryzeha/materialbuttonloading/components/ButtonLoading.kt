@@ -200,6 +200,13 @@ class ButtonLoading @JvmOverloads constructor(
         setButtonStyle(styleButton!!)
     }
     // Public functions
+    /**
+     * Sets the loading state of the button.
+     *
+     * @param loading A boolean value indicating whether the button is in a loading state.
+     *                If true, the button is set to the loading state, hiding the text and showing a loading indicator.
+     *                If false, the button returns to its normal state, displaying the text and hiding the loading indicator.
+     */
     fun setLoading(loading: Boolean){
         isEnabled=!loading
         isClickable = !loading
@@ -212,34 +219,90 @@ class ButtonLoading @JvmOverloads constructor(
             imageView.visibility = View.INVISIBLE
         }
     }
+    /**
+     * Sets the color of text button.
+     *
+     * @param color The color to be set for the text button. This can be a color value (e.g., Color.RED) or
+     *              a color resource ID (e.g., R.color.my_color).
+     */
     private fun setTextColor(color:Int?){
         textView.setTextColor(color?:defaultTextColor!!)
     }
-
+    /**
+     * Sets the color of the loading indicator.
+     *
+     * @param color The color to be set for the loading indicator. This can be a color value (e.g., Color.RED) or
+     *              a color resource ID (e.g., R.color.my_color).
+     */
     fun setLoadingColor(color:Int?){
         circularProgressDrawable.setColorSchemeColors(color!!)
     }
+    /**
+     * Sets the background color of the button.
+     *
+     * @param color The color value or color resource ID to be set as the background color of the button.
+     *              It can be a color value (e.g., Color.RED) or a color resource (e.g., R.color.my_color).
+     */
     fun setColorBackground(color:Int){
         paint.color=color
     }
-
+    /**
+     * Sets the text of the button.
+     *
+     * @param text The text to be displayed on the button. If null or empty, a default text "Button" will be set.
+     *             This can also be a color resource ID (e.g., R.string.my_text_button) to set the text color.
+     */
     fun setText(text : String?) {
        textView.text=if(text.isNullOrEmpty())"Button" else text
     }
-
+    /**
+     * Sets the text size of the button.
+     *
+     * @param size The size of the text. It can be specified in pixels as a float value,
+     *             or it can be a dimension resource ID (e.g., R.dimen.text_size).
+     */
     fun setTextSize(size:Int){
         if(size<=0){
             textView.setTextSize(15f)
         }else{ textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,size.toFloat())}
     }
+    /**
+     * Sets the stroke width of the button's outline.
+     *
+     * @param size The width of the stroke. It can be specified in pixels as a float value,
+     *             or it can be a dimension resource ID (e.g., R.dimen.stroke_width).
+     */
     fun setStrokeWidth(size:Float){
         strokeWidth = convertDpToPixels(size,context).toFloat()
     }
+    /**
+     * Sets whether the text of the button should be displayed in all capital letters.
+     *
+     * @param isAllCaps A boolean value indicating whether the text should be displayed in all capital letters.
+     *                  If true, the text will be displayed in all capital letters.
+     *                  If false, the text will be displayed as-is without capitalization.
+     */
     fun setAllCaps(isAllCaps:Boolean){
         if(isAllCaps)textView.isAllCaps=true
         else textView.isAllCaps=false
     }
-    fun setButtonStyle(style:Int){
+    /**
+     * Establishment the button style.
+     * @param style The button style can be any of the following:
+     *
+     *             - StyleButton.NORMAL_STYLE: Style normal button.
+     *             - StyleButton.OUTLINE_STYLE: Style without stroke and background button.
+     *             - StyleButton.TEXT_BUTTON_STYLE: Style only text.
+     */
+    fun setButtonStyle(style:StyleButton){
+        when(style){
+            StyleButton.NORMAL_STYLE->setButtonNormalStyle()
+            StyleButton.OUTLINE_STYLE->{setOutlineStyle()}
+            StyleButton.TEXT_BUTTON_STYLE->setTextButtonStyle()
+            else->setButtonNormalStyle()
+        }
+    }
+    private fun setButtonStyle(style: Int){
         when(style){
             StyleButton.NORMAL_STYLE.value->setButtonNormalStyle()
             StyleButton.OUTLINE_STYLE.value->{setOutlineStyle()}
@@ -459,5 +522,7 @@ class ButtonLoading @JvmOverloads constructor(
         }
 
     }
+
 }
+
 
