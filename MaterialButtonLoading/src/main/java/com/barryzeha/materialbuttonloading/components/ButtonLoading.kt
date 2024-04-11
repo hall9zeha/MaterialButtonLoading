@@ -42,6 +42,7 @@ const val TEXT_COLOR_PRIMARY_INVERSE = 0
 const val COLOR_PRIMARY=1
 const val MATERIAL_COLOR_ON_PRIMARY=2
 const val MATERIAL_COLOR_SURFACE=3
+const val COLOR_TRANSPARENT=4
 
 class ButtonLoading @JvmOverloads constructor(
     context:Context,
@@ -248,7 +249,10 @@ class ButtonLoading @JvmOverloads constructor(
     }
     // Public functions
 
-    // Button styles TODO corregir el fondo de ripple en outline button al crear programaticamente el botón
+    private var ripplePaint = Paint().apply {
+        color = backgroundColor!!.adjustAlpha(0.2f)
+    }
+
     @SuppressLint("ResourceType")
     private fun setOutlineStyle(){
         backgroundColor = if(backgroundColor==defaultButtonColor) null else backgroundColor
@@ -262,17 +266,21 @@ class ButtonLoading @JvmOverloads constructor(
 
     }
     private fun setTextButtonStyle(){
+
         strokeWidth = if(strokeWidth == 3f) null else strokeWidth
         backgroundColor = if(backgroundColor == defaultButtonColor) null else backgroundColor
         textColor=if(textColor==defaultTextColor)null else textColor
         progressColor=if(progressColor==defaultTextColor) null else progressColor
         colorStroke=if(colorStroke==defaultButtonColor)null else colorStroke
-
         colorStroke=colorStroke?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         backgroundColor = backgroundColor?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         progressColor= progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
         rippleColor=rippleColor?:mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, COLOR_PRIMARY)
+
+        ripplePaint=Paint().apply {
+            color = mColorList(context).getColor(COLOR_TRANSPARENT, COLOR_PRIMARY)
+        }
 
     }
     private fun setButtonNormalStyle(){
@@ -283,9 +291,7 @@ class ButtonLoading @JvmOverloads constructor(
     }
     // Button styles
 
-    private val ripplePaint = Paint().apply {
-        color = backgroundColor!!.adjustAlpha(0.2f)
-    }
+
     private val animationExpand = object : Runnable {
         override fun run() {
             rippleRadius?.let { radius ->
@@ -327,6 +333,7 @@ class ButtonLoading @JvmOverloads constructor(
     fun stopRipple() {
         if (rippleRadius != null) {
             animationFade.run()
+            ripplePaint.color = rippleColor!!.adjustAlpha(0f)
         }
     }
 

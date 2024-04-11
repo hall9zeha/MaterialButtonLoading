@@ -37,4 +37,6 @@ fun mColorList(context:Context)=
         android.R.attr.textColorPrimaryInverseNoDisable,
         android.R.attr.colorPrimary,
         com.google.android.material.R.attr.colorOnPrimary,
-        com.google.android.material.R.attr.colorSurface))
+        com.google.android.material.R.attr.colorSurface,
+        android.R.color.transparent
+        ))
