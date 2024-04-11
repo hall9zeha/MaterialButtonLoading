@@ -3,6 +3,8 @@ package com.barryzeha.materialbutton
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -32,25 +34,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         val contentMain = findViewById<LinearLayout>(R.id.main)
+
+        val layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         val btn = ButtonLoading(this)
         btn.setButtonStyle(2)
         btn.setAllCaps(false)
+        btn.setText("Iniciar sesión")
         btn.setLoading(false)
+        btn.layoutParams=layoutParams
         contentMain.addView(btn)
-      /* val button = findViewById<ButtonLoading>(R.id.btnLoading)
-        button.setLoading(false)
-        button.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                launch(Dispatchers.Main){
-                    button.setLoading(true)
-                }
-                delay(3000)
-                launch(Dispatchers.Main) {
-                    button.setLoading(false)
-                }
-            }
-            //Toast.makeText(this, "Hola mundo", Toast.LENGTH_SHORT).show()
-        }*/
+
+        /* val button = findViewById<ButtonLoading>(R.id.btnLoading)
+          button.setLoading(false)
+          button.setOnClickListener {
+              CoroutineScope(Dispatchers.IO).launch {
+                  launch(Dispatchers.Main){
+                      button.setLoading(true)
+                  }
+                  delay(3000)
+                  launch(Dispatchers.Main) {
+                      button.setLoading(false)
+                  }
+              }
+              //Toast.makeText(this, "Hola mundo", Toast.LENGTH_SHORT).show()
+          }*/
 
     }
 }

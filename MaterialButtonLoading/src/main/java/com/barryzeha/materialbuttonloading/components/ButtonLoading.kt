@@ -181,16 +181,7 @@ class ButtonLoading @JvmOverloads constructor(
         backgroundColor = if(!attrColorBackground.isNullOrEmpty()) Color.parseColor(attrColorBackground) else defaultButtonColor
         rippleColor = if(!attrColorRipple.isNullOrEmpty()) Color.parseColor(attrColorRipple) else rippleColor
         progressColor = if(!attrProgressColor.isNullOrEmpty()) Color.parseColor(attrProgressColor) else convertColorReferenceToHex(defaultTextColor)
-       /* strokeWidth=attrStrokeWidth
 
-        isEnabled = attrEnabled!!
-        setText(buttonText)
-        setLoading(attrLoading!!)
-        setLoadingColor(defaultTextColor!!)
-        setTextColor(textColor!!)
-        setTextSize(attrTextSize!!)
-        setAllCaps(attrAllCaps!!)
-        setButtonStyle(styleButton)*/
         init()
         arr.recycle()
 
@@ -198,7 +189,6 @@ class ButtonLoading @JvmOverloads constructor(
     }
     private fun init(){
         strokeWidth=attrStrokeWidth
-
         isEnabled = attrEnabled!!
         setText(buttonText)
         setLoading(attrLoading!!)
@@ -231,10 +221,11 @@ class ButtonLoading @JvmOverloads constructor(
     fun setColorBackground(color:Int){
         paint.color=color
     }
+
     fun setText(text : String?) {
        textView.text=if(text.isNullOrEmpty())"Button" else text
-
     }
+
     fun setTextSize(size:Int){
         if(size<=0){
             textView.setTextSize(15f)
@@ -267,7 +258,6 @@ class ButtonLoading @JvmOverloads constructor(
         backgroundColor=backgroundColor?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         strokeWidth=strokeWidth?:appliedDimension(1,this)
-
         progressColor = progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
 
     }
@@ -277,12 +267,14 @@ class ButtonLoading @JvmOverloads constructor(
         textColor=if(textColor==defaultTextColor)null else textColor
         progressColor=if(progressColor==defaultTextColor) null else progressColor
         rippleColor=if(rippleColor==0x88888888.toInt()) null else rippleColor
+        colorStroke=if(colorStroke==defaultButtonColor)null else colorStroke
 
         colorStroke=colorStroke?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         backgroundColor = backgroundColor?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         progressColor= progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
         rippleColor=rippleColor?:mColorList(context).getColor(MATERIAL_COLOR_SURFACE, COLOR_PRIMARY)
+
     }
     private fun setButtonNormalStyle(){
         setColorBackground(backgroundColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
@@ -329,7 +321,7 @@ class ButtonLoading @JvmOverloads constructor(
         rippleX = x
         rippleY = y
         rippleRadius = maxRippleRadius * 0.15f
-        ripplePaint.color = rippleColor!!.adjustAlpha(0.2f)
+        ripplePaint.color = rippleColor!!.adjustAlpha(0.4f)
         animationExpand.run()
     }
 
@@ -342,13 +334,8 @@ class ButtonLoading @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val width = width.toFloat()
         val height = height.toFloat()
-
-       /* val rectLeft = 6f
-        val rectTop = padding.toFloat()
-        val rectRight = width -4f
-        val rectBottom = height - padding.toFloat()*/
-
-        val strokeWidth = appliedDimension(strokeWidth!!.toInt(), this) ?: 1f
+        // para que stroke width crezca hacia el centro y no afuera de los márgenes
+        val strokeWidth = appliedDimension(strokeWidth?.toInt() ?: 2, this)
         val halfStrokeWidth = strokeWidth / 2f // Calcula la mitad del ancho del borde
 
         val rectLeft = 6f + halfStrokeWidth // Ajusta el borde hacia adentro sumando la mitad del ancho del borde
@@ -356,6 +343,7 @@ class ButtonLoading @JvmOverloads constructor(
         val rectRight = width - 4f - halfStrokeWidth // Ajusta el borde hacia adentro restando la mitad del ancho del borde
         val rectBottom = height - padding.toFloat() - halfStrokeWidth // Ajusta el borde hacia adentro restando la mitad del ancho del borde
 
+        //**************************************
 
         val corners=
         cornerRadius?.let{
@@ -378,7 +366,7 @@ class ButtonLoading @JvmOverloads constructor(
         paint.style = Paint.Style.STROKE
 
         paint.color = colorStroke!!
-        //paint.strokeWidth = convertDpToPixels(appliedDimension(strokeWidth!!.toInt(),this) ?:1f,context).toFloat()
+
         paint.strokeWidth = strokeWidth
         // Primero agregamos el efecto ripple
         canvas.drawRoundRect(rect, corners, corners, ripplePaint)

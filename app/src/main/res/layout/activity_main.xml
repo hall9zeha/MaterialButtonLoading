@@ -44,7 +44,7 @@
         android:id="@+id/btnLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:text="Button"
+        app:text="Iniciar sesión cuenta"
         app:cornerRadius="32dp"
         app:loading="false"
         app:styleButton="text"
