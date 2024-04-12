@@ -1,10 +1,11 @@
 package com.barryzeha.materialbuttonloading.components
 
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -18,15 +19,18 @@ import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.graphics.ColorUtils
+import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.barryzeha.materialbuttonloading.R
 import com.barryzeha.materialbuttonloading.common.adjustAlpha
 import com.barryzeha.materialbuttonloading.common.alpha
 import com.barryzeha.materialbuttonloading.common.appliedDimension
+import com.barryzeha.materialbuttonloading.common.checkIfNightMode
 import com.barryzeha.materialbuttonloading.common.convertColorReferenceToHex
 import com.barryzeha.materialbuttonloading.common.mColorList
 import kotlin.math.min
@@ -53,7 +57,10 @@ class ButtonLoading @JvmOverloads constructor(
     enum class StyleButton(val value:Int){
         NORMAL_STYLE(0), OUTLINE_STYLE(1),TEXT_BUTTON_STYLE(2)
     }
-    private var styleButton:Int?=null
+    enum class ProgressType(val value:Int){
+        CIRCULAR(0),DOTS(1)
+    }
+
     private val padding=8
     private var cornerRadius:Float? = null
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -61,24 +68,46 @@ class ButtonLoading @JvmOverloads constructor(
     private val rect = RectF()
 
     // Attributes
+    private var attrStyleButton:Int?=null
     private var attrLoading:Boolean?=null
     private var attrEnabled:Boolean?=null
     private var attrStrokeWidth:Float?=null
     private var attrTextColor:String?=null
+    private var attrButtonText:String?=null
     private var attrTextSize:Int?=null
     private var attrAllCaps:Boolean?=null
     private var attrColorStroke:String?=null
     private var attrColorBackground:String?=null
     private var attrColorRipple:String?=null
     private var attrProgressColor:String?=null
+    private var attrProgressType:Int?=null
     // Attributes
+
+    // Dot loading
+
+    private var dotSize:Int = convertDpToPixels(8f,context)
+    private var margin:Int = convertDpToPixels(4f,context)
+    private var numOfDots= 3
+    private var animators = mutableListOf<Animator>()
+    private var animationTime = 1000L
+    private var minScale = 0.5f
+    private var maxScale = 1f
+    private var dotResource = R.drawable.dot_shape
+    private var dotAnimator: ValueAnimator? = null
+    private var colorDot = androidx.appcompat.R.attr.colorAccent
+    private var startDotsAnimation = true
+    private var primaryAnimator:ValueAnimator? = null
+    private lateinit var dotProgress:LinearLayout
+
+
+    // Dot loading
     private var defaultTextColor:Int?=null
     private var defaultButtonColor:Int?=null
+
     private var textColor:Int?=null
     private var colorStroke:Int? = null
     private var backgroundColor:Int?=null
     private var progressColor:Int?=null
-    private var buttonText:String?=null
     private var textView: TextView
     private var imageView:ImageView
     private var circularProgressDrawable:CircularProgressDrawable
@@ -92,12 +121,14 @@ class ButtonLoading @JvmOverloads constructor(
 
     init {
         setBackgroundColor(Color.TRANSPARENT)
+        dotProgress = LinearLayout(context)
         textView = TextView(context)
         imageView = ImageView(context)
         circularProgressDrawable = CircularProgressDrawable(context)
 
         loadAttr(attrs, defStyleAttr)
         setUpChildViews()
+        setUpDotLoading()
         setOnTouchListener(this)
     }
 
@@ -140,6 +171,47 @@ class ButtonLoading @JvmOverloads constructor(
         addView(textView)
         addView(imageView)
 
+
+    }
+    private fun setUpDotLoading(){
+
+        //removeAllViews()
+        clipChildren = false
+        clipToPadding = false
+
+        val progressDotsLayoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        progressDotsLayoutParams.addRule(CENTER_IN_PARENT)
+        dotProgress.layoutParams = progressDotsLayoutParams
+        dotProgress.clipChildren = false
+        dotProgress.clipToPadding = false
+        addView(dotProgress)
+        animators.clear()
+
+        for(i in 0 until numOfDots){
+            val dot= View(context)
+            val layoutParams = LayoutParams(dotSize * 2 , dotSize * 2)
+            layoutParams.setMargins(margin,margin,margin,margin)
+            dot.layoutParams = layoutParams
+            dot.scaleX = minScale
+            dot.scaleY = minScale
+            dot.setBackgroundResource(dotResource)
+            dot.background.setTint(progressColor!!)
+
+            dotProgress.addView(dot)
+            val animator = getScaleAnimator(dot)
+            animators.add(animator)
+        }
+        primaryAnimator?.cancel()
+        primaryAnimator = ValueAnimator.ofInt(0,numOfDots)
+        primaryAnimator?.addUpdateListener {
+            if(it.animatedValue != numOfDots)
+                animators[it.animatedValue as Int].start()
+        }
+        primaryAnimator?.repeatMode = ValueAnimator.RESTART
+        primaryAnimator?.repeatCount = ValueAnimator.INFINITE
+        primaryAnimator?.duration = animationTime
+        primaryAnimator?.interpolator = LinearInterpolator()
+        setStartAnimation(startDotsAnimation)
     }
     @SuppressLint("CustomViewStyleable", "ResourceType")
     private fun loadAttr(attrs: AttributeSet?, defStyleAttr: Int) {
@@ -149,11 +221,8 @@ class ButtonLoading @JvmOverloads constructor(
             defStyleAttr,
             0
         )
-
-        val nightModeFlags = context.resources.configuration.uiMode and
-                Configuration.UI_MODE_NIGHT_MASK
-        defaultTextColor = try {
-            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+       defaultTextColor = try {
+            if (checkIfNightMode(context)) {
                 mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
             } else {
                 mColorList(context).getColor(TEXT_COLOR_PRIMARY_INVERSE, TEXT_COLOR_PRIMARY_INVERSE)
@@ -163,8 +232,9 @@ class ButtonLoading @JvmOverloads constructor(
         }
 
         defaultButtonColor = mColorList(context).getColor(COLOR_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
-        styleButton = arr.getInt(R.styleable.loadingButtonStyleable_styleButton,0)
-        buttonText = arr.getString(R.styleable.loadingButtonStyleable_text)
+        attrStyleButton = arr.getInt(R.styleable.loadingButtonStyleable_styleButton,0)
+        attrProgressType = arr.getInt(R.styleable.loadingButtonStyleable_progressType,0)
+        attrButtonText = arr.getString(R.styleable.loadingButtonStyleable_text)
         cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 50F)
         attrLoading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
         attrEnabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
@@ -176,6 +246,7 @@ class ButtonLoading @JvmOverloads constructor(
         attrColorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
         attrColorRipple = arr.getString(R.styleable.loadingButtonStyleable_colorRipple)
         attrProgressColor = arr.getString(R.styleable.loadingButtonStyleable_progressColor)
+
 
         textColor = if(!attrTextColor.isNullOrEmpty()) Color.parseColor(attrTextColor) else defaultTextColor!!
         colorStroke = if(!attrColorStroke.isNullOrEmpty()) Color.parseColor(attrColorStroke) else defaultButtonColor
@@ -191,13 +262,16 @@ class ButtonLoading @JvmOverloads constructor(
     private fun init(){
         strokeWidth=attrStrokeWidth
         isEnabled = attrEnabled!!
-        setText(buttonText)
+        setText(attrButtonText)
         setLoading(attrLoading!!)
         setLoadingColor(defaultTextColor!!)
         setTextColor(textColor!!)
         setTextSize(attrTextSize!!)
         setAllCaps(attrAllCaps!!)
-        setButtonStyle(styleButton!!)
+        setButtonStyle(attrStyleButton!!)
+    }
+    private fun setStartAnimation(start:Boolean){
+        if(start)primaryAnimator?.start()else primaryAnimator?.cancel()
     }
     // Public functions
     /**
@@ -211,13 +285,41 @@ class ButtonLoading @JvmOverloads constructor(
         isEnabled=!loading
         isClickable = !loading
         if(loading){
-            textView.visibility = View.INVISIBLE
-            imageView.visibility = View.VISIBLE
-
+            setProgressType(attrProgressType!!)
         } else {
-           textView.visibility = View.VISIBLE
-            imageView.visibility = View.INVISIBLE
+            stopAnimation()
+            textView.visibility = View.VISIBLE
+            imageView.visibility = View.GONE
+            dotProgress.visibility=View.GONE
         }
+    }
+    fun setProgressType(progressType: ProgressType?){
+        progressType?.let {
+            attrProgressType = progressType.value
+            setProgressType(attrProgressType!!)
+        }
+    }
+    private fun setProgressType(progressType:Int){
+        when(progressType){
+            ProgressType.CIRCULAR.value->{
+                textView.visibility = View.INVISIBLE
+                imageView.visibility = View.VISIBLE
+                dotProgress.visibility=View.INVISIBLE
+            }
+            ProgressType.DOTS.value->{
+                startAnimation()
+                textView.visibility = View.INVISIBLE
+                imageView.visibility = View.INVISIBLE
+                dotProgress.visibility=View.VISIBLE
+            }
+        }
+    }
+    private fun stopAnimation() {
+        primaryAnimator?.cancel()
+    }
+
+    private fun startAnimation() {
+        primaryAnimator?.start()
     }
     /**
      * Sets the color of text button.
@@ -326,6 +428,9 @@ class ButtonLoading @JvmOverloads constructor(
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         strokeWidth=strokeWidth?:appliedDimension(1,this)
         progressColor = progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
+        ripplePaint=Paint().apply {
+            color = mColorList(context).getColor(COLOR_TRANSPARENT, COLOR_PRIMARY)
+        }
 
     }
     private fun setTextButtonStyle(){
@@ -344,12 +449,12 @@ class ButtonLoading @JvmOverloads constructor(
         ripplePaint=Paint().apply {
             color = mColorList(context).getColor(COLOR_TRANSPARENT, COLOR_PRIMARY)
         }
-
     }
     private fun setButtonNormalStyle(){
         setColorBackground(backgroundColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         setTextColor(textColor?:mColorList(context).getColor(TEXT_COLOR_PRIMARY_INVERSE, COLOR_PRIMARY))
         setLoadingColor(progressColor?:mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE))
+
         rippleColor=rippleColor?:0x88888888.toInt()
     }
     // Button styles
@@ -513,6 +618,20 @@ class ButtonLoading @JvmOverloads constructor(
             MeasureSpec.makeMeasureSpec(newWidth, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(newHeight, MeasureSpec.EXACTLY)
         )
+    }
+    private fun getScaleAnimator(view:View):Animator{
+        if(dotAnimator !=null)
+            return dotAnimator as ValueAnimator
+        val animator = ValueAnimator.ofFloat(minScale,maxScale)
+        animator.addUpdateListener {
+            view.scaleX = it.animatedValue as Float
+            view.scaleY = it.animatedValue as Float
+        }
+        animator.duration = animationTime / numOfDots.toLong()
+        animator.repeatCount = 1
+        animator.repeatMode = ValueAnimator.REVERSE
+        animator.interpolator = LinearInterpolator()
+        return animator
     }
 
     companion object {

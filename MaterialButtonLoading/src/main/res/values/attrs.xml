@@ -11,6 +11,10 @@
         <attr name="colorBackground" format="string|reference"/>
         <attr name="colorRipple" format="string|reference"/>
         <attr name="progressColor" format="string|reference"/>
+        <attr name="progressType" format="enum">
+            <enum name="circular" value="0"/>
+            <enum name="dots" value="1"/>
+        </attr>
         <attr name="loading" format="boolean"/>
         <attr name="enabled" format="boolean"/>
         <attr name="progressIndicator" format="reference"/>

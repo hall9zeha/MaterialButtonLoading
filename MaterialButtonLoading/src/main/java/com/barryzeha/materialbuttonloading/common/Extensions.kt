@@ -1,9 +1,13 @@
 package com.barryzeha.materialbuttonloading.common
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
 import android.util.TypedValue
 import android.view.View
+import com.barryzeha.materialbuttonloading.components.COLOR_PRIMARY
+import com.barryzeha.materialbuttonloading.components.MATERIAL_COLOR_ON_PRIMARY
+import com.barryzeha.materialbuttonloading.components.TEXT_COLOR_PRIMARY_INVERSE
 import kotlin.math.roundToInt
 
 
@@ -40,3 +44,8 @@ fun mColorList(context:Context)=
         com.google.android.material.R.attr.colorSurface,
         android.R.color.transparent
         ))
+fun checkIfNightMode(context: Context):Boolean{
+    val nightModeFlags = context.resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK
+      return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+}

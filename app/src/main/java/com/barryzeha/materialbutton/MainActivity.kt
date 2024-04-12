@@ -39,19 +39,20 @@ class MainActivity : AppCompatActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         val btn = ButtonLoading(this)
-        btn.setButtonStyle(ButtonLoading.StyleButton.TEXT_BUTTON_STYLE)
+        btn.setButtonStyle(ButtonLoading.StyleButton.OUTLINE_STYLE)
         btn.setAllCaps(false)
         btn.setText("Iniciar sesión")
-        btn.setLoading(false)
+        btn.setProgressType(ButtonLoading.ProgressType.DOTS)
+        btn.setLoading(true)
         btn.layoutParams=layoutParams
         contentMain.addView(btn)
 
-        /* val button = findViewById<ButtonLoading>(R.id.btnLoading)
+         val button = findViewById<ButtonLoading>(R.id.btnLoading)
           button.setLoading(false)
           button.setOnClickListener {
               CoroutineScope(Dispatchers.IO).launch {
                   launch(Dispatchers.Main){
-                      button.setLoading(true)
+                      //button.setLoading(true)
                   }
                   delay(3000)
                   launch(Dispatchers.Main) {
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                   }
               }
               //Toast.makeText(this, "Hola mundo", Toast.LENGTH_SHORT).show()
-          }*/
+          }
 
     }
 }
