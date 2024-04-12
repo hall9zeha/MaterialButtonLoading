@@ -5,7 +5,6 @@ import android.animation.Animator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -24,7 +23,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.barryzeha.materialbuttonloading.R
 import com.barryzeha.materialbuttonloading.common.adjustAlpha
@@ -190,6 +188,7 @@ class ButtonLoading @JvmOverloads constructor(
         for(i in 0 until numOfDots){
             val dot= View(context)
             val layoutParams = LayoutParams(dotSize * 2 , dotSize * 2)
+
             layoutParams.setMargins(margin,margin,margin,margin)
             dot.layoutParams = layoutParams
             dot.scaleX = minScale
@@ -235,7 +234,7 @@ class ButtonLoading @JvmOverloads constructor(
         attrStyleButton = arr.getInt(R.styleable.loadingButtonStyleable_styleButton,0)
         attrProgressType = arr.getInt(R.styleable.loadingButtonStyleable_progressType,0)
         attrButtonText = arr.getString(R.styleable.loadingButtonStyleable_text)
-        cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 50F)
+        cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 48F)
         attrLoading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
         attrEnabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
         attrStrokeWidth = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,3f)
@@ -289,8 +288,8 @@ class ButtonLoading @JvmOverloads constructor(
         } else {
             stopAnimation()
             textView.visibility = View.VISIBLE
-            imageView.visibility = View.GONE
-            dotProgress.visibility=View.GONE
+            imageView.visibility = View.INVISIBLE
+            dotProgress.visibility=View.INVISIBLE
         }
     }
     fun setProgressType(progressType: ProgressType?){
@@ -428,6 +427,7 @@ class ButtonLoading @JvmOverloads constructor(
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         strokeWidth=strokeWidth?:appliedDimension(1,this)
         progressColor = progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
+
         ripplePaint=Paint().apply {
             color = mColorList(context).getColor(COLOR_TRANSPARENT, COLOR_PRIMARY)
         }

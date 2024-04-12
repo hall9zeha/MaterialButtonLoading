@@ -47,7 +47,7 @@
         app:text="Iniciar sesión cuenta"
         app:cornerRadius="32dp"
         app:loading="false"
-        app:progressType="circular"
+        app:progressType="dots"
         app:styleButton="outline"
         app:layout_constraintStart_toStartOf="@id/tilPasswd"
         app:layout_constraintEnd_toEndOf="@id/tilPasswd"
