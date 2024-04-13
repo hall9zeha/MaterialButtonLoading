@@ -39,14 +39,15 @@ class MainActivity : AppCompatActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         val btn = ButtonLoading(this)
+        btn.setLoading(true)
+        btn.setLoadingColor(Color.parseColor("#d23232"))
         btn.setProgressType(ButtonLoading.ProgressType.DOTS)
         btn.setButtonStyle(ButtonLoading.StyleButton.OUTLINE_STYLE)
-        btn.setLoadingColor(Color.parseColor("#d23232"))
         btn.setAllCaps(false)
         btn.setText("Iniciar sesión")
-        btn.setLoading(true)
         btn.layoutParams=layoutParams
-        //contentMain.addView(btn)
+
+        contentMain.addView(btn)
 
          val button = findViewById<ButtonLoading>(R.id.btnLoading)
           button.setLoading(false)

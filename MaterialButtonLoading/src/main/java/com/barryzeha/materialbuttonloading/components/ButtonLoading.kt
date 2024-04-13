@@ -23,6 +23,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.view.forEach
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.barryzeha.materialbuttonloading.R
 import com.barryzeha.materialbuttonloading.common.adjustAlpha
@@ -130,10 +131,69 @@ class ButtonLoading @JvmOverloads constructor(
         setOnTouchListener(this)
     }
 
+
+    @SuppressLint("CustomViewStyleable", "ResourceType")
+    private fun loadAttr(attrs: AttributeSet?, defStyleAttr: Int) {
+        val arr = context.obtainStyledAttributes(
+            attrs,
+            R.styleable.loadingButtonStyleable,
+            defStyleAttr,
+            0
+        )
+       defaultTextColor = try {
+            if (checkIfNightMode(context)) {
+                mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
+            } else {
+                mColorList(context).getColor(TEXT_COLOR_PRIMARY_INVERSE, TEXT_COLOR_PRIMARY_INVERSE)
+            }
+        }catch(e:Exception){
+            mColorList(context).getColor(COLOR_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
+        }
+
+        defaultButtonColor = mColorList(context).getColor(COLOR_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
+        attrStyleButton = arr.getInt(R.styleable.loadingButtonStyleable_styleButton,0)
+        attrProgressType = arr.getInt(R.styleable.loadingButtonStyleable_progressType,0)
+        attrButtonText = arr.getString(R.styleable.loadingButtonStyleable_text)
+        cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 48F)
+        attrLoading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
+        attrEnabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
+        attrStrokeWidth = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,3f)
+        attrTextColor = arr.getString(R.styleable.loadingButtonStyleable_textColor)
+        attrTextSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,0)
+        attrAllCaps = arr.getBoolean(R.styleable.loadingButtonStyleable_allCaps,false)
+        attrColorStroke = arr.getString(R.styleable.loadingButtonStyleable_colorStroke)
+        attrColorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
+        attrColorRipple = arr.getString(R.styleable.loadingButtonStyleable_colorRipple)
+        attrProgressColor = arr.getString(R.styleable.loadingButtonStyleable_progressColor)
+
+
+        textColor = if(!attrTextColor.isNullOrEmpty()) Color.parseColor(attrTextColor) else defaultTextColor!!
+        colorStroke = if(!attrColorStroke.isNullOrEmpty()) Color.parseColor(attrColorStroke) else defaultButtonColor
+        backgroundColor = if(!attrColorBackground.isNullOrEmpty()) Color.parseColor(attrColorBackground) else defaultButtonColor
+        rippleColor = if(!attrColorRipple.isNullOrEmpty()) Color.parseColor(attrColorRipple) else rippleColor
+        progressColor = if(!attrProgressColor.isNullOrEmpty()) Color.parseColor(attrProgressColor) else convertColorReferenceToHex(defaultTextColor)
+
+        init()
+        arr.recycle()
+
+
+    }
+    private fun init(){
+        strokeWidth=attrStrokeWidth
+        isEnabled = attrEnabled!!
+        setText(attrButtonText)
+        setLoading(attrLoading!!)
+        setLoadingColor(defaultTextColor!!)
+        setTextColor(textColor!!)
+        setTextSize(attrTextSize!!)
+        setAllCaps(attrAllCaps!!)
+        setButtonStyle(attrStyleButton!!)
+    }
+
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
         when (event?.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                 startRipple(event.x, event.y)
+                startRipple(event.x, event.y)
             }
             MotionEvent.ACTION_UP -> {
                 stopRipple()
@@ -211,63 +271,7 @@ class ButtonLoading @JvmOverloads constructor(
         primaryAnimator?.duration = animationTime
         primaryAnimator?.interpolator = LinearInterpolator()
         setStartAnimation(startDotsAnimation)
-    }
-    @SuppressLint("CustomViewStyleable", "ResourceType")
-    private fun loadAttr(attrs: AttributeSet?, defStyleAttr: Int) {
-        val arr = context.obtainStyledAttributes(
-            attrs,
-            R.styleable.loadingButtonStyleable,
-            defStyleAttr,
-            0
-        )
-       defaultTextColor = try {
-            if (checkIfNightMode(context)) {
-                mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
-            } else {
-                mColorList(context).getColor(TEXT_COLOR_PRIMARY_INVERSE, TEXT_COLOR_PRIMARY_INVERSE)
-            }
-        }catch(e:Exception){
-            mColorList(context).getColor(COLOR_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
-        }
 
-        defaultButtonColor = mColorList(context).getColor(COLOR_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
-        attrStyleButton = arr.getInt(R.styleable.loadingButtonStyleable_styleButton,0)
-        attrProgressType = arr.getInt(R.styleable.loadingButtonStyleable_progressType,0)
-        attrButtonText = arr.getString(R.styleable.loadingButtonStyleable_text)
-        cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 48F)
-        attrLoading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
-        attrEnabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
-        attrStrokeWidth = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,3f)
-        attrTextColor = arr.getString(R.styleable.loadingButtonStyleable_textColor)
-        attrTextSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,0)
-        attrAllCaps = arr.getBoolean(R.styleable.loadingButtonStyleable_allCaps,false)
-        attrColorStroke = arr.getString(R.styleable.loadingButtonStyleable_colorStroke)
-        attrColorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
-        attrColorRipple = arr.getString(R.styleable.loadingButtonStyleable_colorRipple)
-        attrProgressColor = arr.getString(R.styleable.loadingButtonStyleable_progressColor)
-
-
-        textColor = if(!attrTextColor.isNullOrEmpty()) Color.parseColor(attrTextColor) else defaultTextColor!!
-        colorStroke = if(!attrColorStroke.isNullOrEmpty()) Color.parseColor(attrColorStroke) else defaultButtonColor
-        backgroundColor = if(!attrColorBackground.isNullOrEmpty()) Color.parseColor(attrColorBackground) else defaultButtonColor
-        rippleColor = if(!attrColorRipple.isNullOrEmpty()) Color.parseColor(attrColorRipple) else rippleColor
-        progressColor = if(!attrProgressColor.isNullOrEmpty()) Color.parseColor(attrProgressColor) else convertColorReferenceToHex(defaultTextColor)
-
-        init()
-        arr.recycle()
-
-
-    }
-    private fun init(){
-        strokeWidth=attrStrokeWidth
-        isEnabled = attrEnabled!!
-        setText(attrButtonText)
-        setLoading(attrLoading!!)
-        setLoadingColor(defaultTextColor!!)
-        setTextColor(textColor!!)
-        setTextSize(attrTextSize!!)
-        setAllCaps(attrAllCaps!!)
-        setButtonStyle(attrStyleButton!!)
     }
     private fun setStartAnimation(start:Boolean){
         if(start)primaryAnimator?.start()else primaryAnimator?.cancel()
@@ -286,7 +290,7 @@ class ButtonLoading @JvmOverloads constructor(
         if(loading){
             setProgressType(attrProgressType!!)
         } else {
-            stopAnimation()
+            //stopAnimation()
             textView.visibility = View.VISIBLE
             imageView.visibility = View.INVISIBLE
             dotProgress.visibility=View.INVISIBLE
@@ -306,7 +310,7 @@ class ButtonLoading @JvmOverloads constructor(
                 dotProgress.visibility=View.INVISIBLE
             }
             ProgressType.DOTS.value->{
-                startAnimation()
+                //startAnimation()
                 textView.visibility = View.INVISIBLE
                 imageView.visibility = View.INVISIBLE
                 dotProgress.visibility=View.VISIBLE
@@ -336,6 +340,9 @@ class ButtonLoading @JvmOverloads constructor(
      *              a color resource ID (e.g., R.color.my_color).
      */
     fun setLoadingColor(color:Int?){
+        color?.let {
+            progressColor = color!!
+        }
         circularProgressDrawable.setColorSchemeColors(color!!)
     }
     /**
@@ -412,11 +419,9 @@ class ButtonLoading @JvmOverloads constructor(
         }
     }
     // Public functions
-
     private var ripplePaint = Paint().apply {
         color = backgroundColor!!.adjustAlpha(0.2f)
     }
-
     @SuppressLint("ResourceType")
     private fun setOutlineStyle(){
         backgroundColor = if(backgroundColor==defaultButtonColor) null else backgroundColor
@@ -427,14 +432,16 @@ class ButtonLoading @JvmOverloads constructor(
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         strokeWidth=strokeWidth?:appliedDimension(1,this)
         progressColor = progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
-
+        // Para forzar el color cuando el loader es con puntos
+        dotProgress.forEach {
+            view -> view.background.setTint(progressColor!!)
+        }
+        // ***************************************************
         ripplePaint=Paint().apply {
             color = mColorList(context).getColor(COLOR_TRANSPARENT, COLOR_PRIMARY)
         }
-
     }
     private fun setTextButtonStyle(){
-
         strokeWidth = if(strokeWidth == 3f) null else strokeWidth
         backgroundColor = if(backgroundColor == defaultButtonColor) null else backgroundColor
         textColor=if(textColor==defaultTextColor)null else textColor
@@ -445,7 +452,11 @@ class ButtonLoading @JvmOverloads constructor(
         setTextColor(textColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         progressColor= progressColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY)
         rippleColor=rippleColor?:mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, COLOR_PRIMARY)
-
+        // Para forzar el color cuando el loader es con puntos
+        dotProgress.forEach {
+                view -> view.background.setTint(progressColor!!)
+        }
+        // ***************************************************
         ripplePaint=Paint().apply {
             color = mColorList(context).getColor(COLOR_TRANSPARENT, COLOR_PRIMARY)
         }
@@ -458,8 +469,6 @@ class ButtonLoading @JvmOverloads constructor(
         rippleColor=rippleColor?:0x88888888.toInt()
     }
     // Button styles
-
-
     private val animationExpand = object : Runnable {
         override fun run() {
             rippleRadius?.let { radius ->

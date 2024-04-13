@@ -31,6 +31,7 @@ fun convertColorReferenceToHex(colorRef:Int?):Int{
     }
     return 0
 }
+
 fun appliedDimension(size:Int, view: View)= TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_PX,
     size.toFloat(),
