@@ -48,5 +48,5 @@ fun mColorList(context:Context)=
 fun checkIfNightMode(context: Context):Boolean{
     val nightModeFlags = context.resources.configuration.uiMode and
             Configuration.UI_MODE_NIGHT_MASK
-      return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+    return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
 }

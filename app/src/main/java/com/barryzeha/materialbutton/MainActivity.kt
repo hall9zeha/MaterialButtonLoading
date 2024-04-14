@@ -34,10 +34,12 @@ class MainActivity : AppCompatActivity() {
         }
         val contentMain = findViewById<LinearLayout>(R.id.main)
 
+        // Programmatically implementation example
         val layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+
         val btn = ButtonLoading(this)
         btn.setLoading(true)
         btn.setLoadingColor(Color.parseColor("#d23232"))
@@ -48,7 +50,10 @@ class MainActivity : AppCompatActivity() {
         btn.layoutParams=layoutParams
 
         contentMain.addView(btn)
+        // ***********************************************
 
+
+        // Of Xml design example
          val button = findViewById<ButtonLoading>(R.id.btnLoading)
           button.setLoading(false)
           button.setOnClickListener {
@@ -61,8 +66,9 @@ class MainActivity : AppCompatActivity() {
                       button.setLoading(false)
                   }
               }
-              //Toast.makeText(this, "Hola mundo", Toast.LENGTH_SHORT).show()
+
           }
+        // ****************************************************
 
     }
 }

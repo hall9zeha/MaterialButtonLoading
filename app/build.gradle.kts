@@ -45,6 +45,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
+    // Locale module
     implementation (project(":MaterialButtonLoading"))
+    // Remote jitpack maven repo
+    //implementation("com.github.hall9zeha:MaterialButtonLoading:1.0.0")
 }
