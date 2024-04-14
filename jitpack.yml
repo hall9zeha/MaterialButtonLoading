@@ -7,7 +7,7 @@ build:
   gradle: 8.4
   dependencies:
 
-    - android-tools-build: "8.4.0"
+    - android-tools-build: "8.3.0"
 
 notifications:
   on_success: always # Notificar siempre en caso de éxito
