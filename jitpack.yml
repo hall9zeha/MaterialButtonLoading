@@ -1,0 +1,14 @@
+project:
+  name: MaterialButtonLoading
+jdk:
+  - openjdk17
+# Configuración de construcción
+build:
+  gradle: 8.4
+  dependencies:
+
+    - android-tools-build: "8.4.0"
+
+notifications:
+  on_success: always # Notificar siempre en caso de éxito
+  on_failure: always # Notificar siempre en caso de fallo
