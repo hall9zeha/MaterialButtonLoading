@@ -284,7 +284,9 @@ class ButtonLoading @JvmOverloads constructor(
      *                If true, the button is set to the loading state, hiding the text and showing a loading indicator.
      *                If false, the button returns to its normal state, displaying the text and hiding the loading indicator.
      */
+
     fun setLoading(loading: Boolean){
+
         isEnabled=!loading
         isClickable = !loading
         if(loading){
@@ -523,7 +525,7 @@ class ButtonLoading @JvmOverloads constructor(
 
         val rectLeft = 6f + halfStrokeWidth // Ajusta el borde hacia adentro sumando la mitad del ancho del borde
         val rectTop = padding.toFloat() + halfStrokeWidth // Ajusta el borde hacia adentro sumando la mitad del ancho del borde
-        val rectRight = width - 4f - halfStrokeWidth // Ajusta el borde hacia adentro restando la mitad del ancho del borde
+        val rectRight = width - 1f - halfStrokeWidth // Ajusta el borde hacia adentro restando la mitad del ancho del borde
         val rectBottom = height - padding.toFloat() - halfStrokeWidth // Ajusta el borde hacia adentro restando la mitad del ancho del borde
 
         //**************************************
@@ -538,7 +540,7 @@ class ButtonLoading @JvmOverloads constructor(
         // Dibujar el fondo redondeado
         paint.style = Paint.Style.FILL
         paint.color = backgroundColor!!
-        // Aplicamos paddin al objeto que se dibuja dentro de nuestro contentMain
+        // Aplicamos padding al objeto que se dibuja dentro de nuestro contentMain
         rect.set(rectLeft, rectTop, rectRight, rectBottom)
 
         path.reset()
@@ -566,7 +568,7 @@ class ButtonLoading @JvmOverloads constructor(
         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
 
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec) +4
         val heightSize = MeasureSpec.getSize(heightMeasureSpec)
 
         val width= when(widthMode){

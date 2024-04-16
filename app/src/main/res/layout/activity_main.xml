@@ -42,11 +42,12 @@
     </com.google.android.material.textfield.TextInputLayout>
     <com.barryzeha.materialbuttonloading.components.ButtonLoading
         android:id="@+id/btnLoading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="220dp"
+        android:layout_height="60dp"
         app:text="Iniciar sesión"
-        app:cornerRadius="32dp"
+        app:cornerRadius="4dp"
         app:loading="false"
+
         app:progressType="dots"
         app:styleButton="normal"
         app:layout_constraintStart_toStartOf="@id/tilPasswd"
