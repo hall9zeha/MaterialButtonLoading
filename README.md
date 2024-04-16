@@ -8,6 +8,9 @@ Android library of button loading for sign in
 
 ## Requirements
 
+* Android compile SDK 34
+* Android min SDK 23 
+
 ## Implementation
 
 ### How to use
