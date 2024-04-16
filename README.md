@@ -1,4 +1,9 @@
 # Material-Button-Loading
+<p align="center">
+<a href="https://github.com/hall9zeha/MaterialButtonLoading/actions"><img alt="Build Status" src="https://github.com/hall9zeha/MaterialButtonLoading/workflows/MaterialButtonLoading/badge.svg"/></a> 
+<a href="https://jitpack.io/#hall9zeha/MaterialButtonLoading"><img alt="License" src="https://jitpack.io/v/hall9zeha/MaterialButtonLoading.svg"/></a>
+</p>
+
 Android library of button loading for sign in
 
 ## Requirements
@@ -124,4 +129,3 @@ dependencies{
 
 ## License
 
-## Team
