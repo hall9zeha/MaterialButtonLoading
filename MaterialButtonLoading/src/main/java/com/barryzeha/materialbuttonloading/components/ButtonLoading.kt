@@ -467,7 +467,11 @@ class ButtonLoading @JvmOverloads constructor(
         setColorBackground(backgroundColor?:mColorList(context).getColor(COLOR_PRIMARY, COLOR_PRIMARY))
         setTextColor(textColor?:mColorList(context).getColor(TEXT_COLOR_PRIMARY_INVERSE, COLOR_PRIMARY))
         setLoadingColor(progressColor?:mColorList(context).getColor(MATERIAL_COLOR_ON_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE))
-
+        progressColor=if(progressColor==defaultTextColor) null else progressColor
+        progressColor = if(!attrProgressColor.isNullOrEmpty()) Color.parseColor(attrProgressColor) else convertColorReferenceToHex(defaultTextColor)
+        dotProgress.forEach {
+                view -> view.background.setTint(progressColor!!)
+        }
         rippleColor=rippleColor?:0x88888888.toInt()
     }
     // Button styles

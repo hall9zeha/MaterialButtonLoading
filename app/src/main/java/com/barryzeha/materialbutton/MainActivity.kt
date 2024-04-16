@@ -50,12 +50,13 @@ class MainActivity : AppCompatActivity() {
         btn.setText("Iniciar sesión")
         btn.layoutParams=layoutParams
 
-        contentMain.addView(btn)
+        //contentMain.addView(btn)
         // ***********************************************
 
 
         // Of Xml design example
          val button = findViewById<ButtonLoading>(R.id.btnLoading)
+
           button.setLoading(false)
           button.setOnClickListener {
               CoroutineScope(Dispatchers.IO).launch {
