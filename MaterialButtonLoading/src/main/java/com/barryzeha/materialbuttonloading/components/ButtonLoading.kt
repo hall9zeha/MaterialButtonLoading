@@ -529,7 +529,7 @@ class ButtonLoading @JvmOverloads constructor(
 
         val rectLeft = 6f + halfStrokeWidth // Ajusta el borde hacia adentro sumando la mitad del ancho del borde
         val rectTop = padding.toFloat() + halfStrokeWidth // Ajusta el borde hacia adentro sumando la mitad del ancho del borde
-        val rectRight = width - 1f - halfStrokeWidth // Ajusta el borde hacia adentro restando la mitad del ancho del borde
+        val rectRight = width  - halfStrokeWidth // Ajusta el borde hacia adentro restando la mitad del ancho del borde
         val rectBottom = height - padding.toFloat() - halfStrokeWidth // Ajusta el borde hacia adentro restando la mitad del ancho del borde
 
         //**************************************
@@ -572,7 +572,7 @@ class ButtonLoading @JvmOverloads constructor(
         val widthMode = MeasureSpec.getMode(widthMeasureSpec)
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
 
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec) +4
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec) + 8
         val heightSize = MeasureSpec.getSize(heightMeasureSpec)
 
         val width= when(widthMode){

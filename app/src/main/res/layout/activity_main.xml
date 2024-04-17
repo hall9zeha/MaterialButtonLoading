@@ -47,7 +47,6 @@
         app:text="Iniciar sesión"
         app:cornerRadius="34dp"
         app:loading="false"
-        app:progressColor="#d23232"
         app:progressType="dots"
         app:styleButton="normal"
         app:layout_constraintStart_toStartOf="@id/tilPasswd"
