@@ -136,7 +136,7 @@ class ButtonLoading @JvmOverloads constructor(
     private fun loadAttr(attrs: AttributeSet?, defStyleAttr: Int) {
         val arr = context.obtainStyledAttributes(
             attrs,
-            R.styleable.loadingButtonStyleable,
+            R.styleable.ButtonLoading,
             defStyleAttr,
             0
         )
@@ -151,20 +151,20 @@ class ButtonLoading @JvmOverloads constructor(
         }
 
         defaultButtonColor = mColorList(context).getColor(COLOR_PRIMARY, TEXT_COLOR_PRIMARY_INVERSE)
-        attrStyleButton = arr.getInt(R.styleable.loadingButtonStyleable_styleButton,0)
-        attrProgressType = arr.getInt(R.styleable.loadingButtonStyleable_progressType,0)
-        attrButtonText = arr.getString(R.styleable.loadingButtonStyleable_text)
-        cornerRadius = arr.getDimension(R.styleable.loadingButtonStyleable_cornerRadius, 48F)
-        attrLoading = arr.getBoolean(R.styleable.loadingButtonStyleable_loading, false)
-        attrEnabled = arr.getBoolean(R.styleable.loadingButtonStyleable_enabled, true)
-        attrStrokeWidth = arr.getDimension(R.styleable.loadingButtonStyleable_strokeWidth,3f)
-        attrTextColor = arr.getString(R.styleable.loadingButtonStyleable_textColor)
-        attrTextSize = arr.getDimensionPixelSize(R.styleable.loadingButtonStyleable_textSize,0)
-        attrAllCaps = arr.getBoolean(R.styleable.loadingButtonStyleable_allCaps,false)
-        attrColorStroke = arr.getString(R.styleable.loadingButtonStyleable_colorStroke)
-        attrColorBackground = arr.getString(R.styleable.loadingButtonStyleable_colorBackground)
-        attrColorRipple = arr.getString(R.styleable.loadingButtonStyleable_colorRipple)
-        attrProgressColor = arr.getString(R.styleable.loadingButtonStyleable_progressColor)
+        attrStyleButton = arr.getInt(R.styleable.ButtonLoading_styleButton,0)
+        attrProgressType = arr.getInt(R.styleable.ButtonLoading_progressType,0)
+        attrButtonText = arr.getString(R.styleable.ButtonLoading_text)
+        cornerRadius = arr.getDimension(R.styleable.ButtonLoading_cornerRadius, 48F)
+        attrLoading = arr.getBoolean(R.styleable.ButtonLoading_loading, false)
+        attrEnabled = arr.getBoolean(R.styleable.ButtonLoading_enabled, true)
+        attrStrokeWidth = arr.getDimension(R.styleable.ButtonLoading_strokeWidth,3f)
+        attrTextColor = arr.getString(R.styleable.ButtonLoading_textColor)
+        attrTextSize = arr.getDimensionPixelSize(R.styleable.ButtonLoading_textSize,0)
+        attrAllCaps = arr.getBoolean(R.styleable.ButtonLoading_allCaps,false)
+        attrColorStroke = arr.getString(R.styleable.ButtonLoading_colorStroke)
+        attrColorBackground = arr.getString(R.styleable.ButtonLoading_colorBackground)
+        attrColorRipple = arr.getString(R.styleable.ButtonLoading_colorRipple)
+        attrProgressColor = arr.getString(R.styleable.ButtonLoading_progressColor)
 
 
         textColor = if(!attrTextColor.isNullOrEmpty()) Color.parseColor(attrTextColor) else defaultTextColor!!
