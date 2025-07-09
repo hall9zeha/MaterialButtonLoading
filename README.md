@@ -128,7 +128,7 @@ dependencies{
 ||||
 |--|--|--|
 | |||
-|<img src="https://github.com/hall9zeha/MaterialButtonLoading/blob/main/docs/screenshots/screen1.gif" width=80% height=80% />|<img src="https://github.com/hall9zeha/MaterialButtonLoading/blob/main/docs/screenshots/screen2.gif" width=80% height=80% />|<img src="https://github.com/hall9zeha/MaterialButtonLoading/blob/main/docs/screenshots/screen3.gif" width=80% height=80% />|
+|<img src="https://github.com/hall9zeha/MaterialButtonLoading/blob/main/docs/screenshots/screen1.gif" width=80% />|<img src="https://github.com/hall9zeha/MaterialButtonLoading/blob/main/docs/screenshots/screen2.gif" width=80% />|<img src="https://github.com/hall9zeha/MaterialButtonLoading/blob/main/docs/screenshots/screen3.gif" width=80% />|
 
 ## License
 ```xml
